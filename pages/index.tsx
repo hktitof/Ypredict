@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import Script from "next/script";
-
+import { useState } from "react";
 // imports components
 import Footer from "../components/Footer/Footer";
 import Header from "../components/Header/Header";
@@ -19,7 +19,10 @@ import RoadMap from "../components/RoadMap/RoadMap";
 import FrequentlyAskedQuestions from "../components/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import InterestedVestingNotification from "../components/InterestedVestingNotification/InterestedVestingNotification";
 import  { Toaster } from "react-hot-toast";
+import { WalletModal,Wallet } from "web3uikit";
 export default function Home() {
+  const [showModal, setShowModal] = useState(false);
+  
   return (
     <>
       <Head>
@@ -30,6 +33,7 @@ export default function Home() {
         {/* <HeadLink/> */}
       </Head>
       <div id="main-wrapper">
+      <WalletModal isOpened={showModal} setIsOpened={setShowModal } />
       <Toaster
         position="top-center"
         reverseOrder={false}
@@ -56,7 +60,7 @@ export default function Home() {
         }}
       />
         <Header />
-        <HeroSection />
+        <HeroSection setShowModal={setShowModal} showModal={showModal} />
         <TeamPaddnel />
         <PlatformFeature />
         <PlatformPayment />

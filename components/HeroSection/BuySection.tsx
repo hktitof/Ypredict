@@ -1,27 +1,74 @@
 import React from "react";
-import { useMoralis } from "react-moralis";
+import { useMoralis, useChain } from "react-moralis";
 import { useEffect } from "react";
 import Lock from "./icon/Lock";
 import toast from "react-hot-toast";
-export default function BuySection() {
-  const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
 
+// import WalletConnectProvider from "@walletconnect/web3-provider";
+// import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
+// import Web3Modal from "web3modal";
+
+export default function BuySection(props: { showModal; setShowModal }) {
+  const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
+  const { chain } = useChain();
   const [newAccount, setNewAccount] = React.useState<string | null>(null);
   const [detectedAccount, setDetectedAccount] = React.useState<string | null>(null);
-  const[walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
+  const [walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
   const connectButton = async () => {
-    await enableWeb3();
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem("connected", "true");
-    }
+    props.setShowModal(true);
+    // await enableWeb3();
+    // if (typeof window !== "undefined") {
+    //   window.localStorage.setItem("connected", "true");
+    // }
   };
+
+  //   const activateProvider = async () => {
+  //     const providerOptions = {
+  //       injected: {
+  //         display: {
+  //           name: "Metamask",
+  //           description: "Connect with the provider in your Browser",
+  //         },
+  //         package: null,
+  //       },
+  //       walletconnect: {
+  //         package: WalletConnectProvider,
+  //         options: {
+  //           bridge: "https://bridge.walletconnect.org",
+  //           infuraId: infuraId,
+  //         },
+  //       },
+  //       coinbasewallet: {
+  //         package: CoinbaseWalletSDK,
+  //         options: {
+  //           appName: "Y Predict",
+  //           infuraId: infuraId,
+  //           rpc: rpcUrl,
+  //           chainId: supportedChainId,
+  //           darkMode: false,
+  //         },
+  //       },
+  //     };
+
+  //     const web3Modal = new Web3Modal({
+  //       providerOptions,
+  //     });
+  //     try {
+  //       const provider = await web3Modal.connect();
+  //       //customToast.success('Successfully Connected');
+  //       const response = await activate(provider);
+  //       console.log("response - ", response);
+  //     } catch (error) {
+  //       // customToast.error(error);
+  //     }
+  //   };
 
   // useEffect : automaticaly run on load, then, it'll run checking the value again
   // check if wallet is connected
   useEffect(() => {
     // check if wallet is connected
-    if (isWeb3Enabled ) {
-        return;
+    if (isWeb3Enabled) {
+      return;
     }
     if (typeof window !== "undefined") {
       if (typeof localStorage !== "undefined") {
@@ -49,27 +96,28 @@ export default function BuySection() {
     });
   });
 
-  useEffect(()=>{
-    if(isWeb3Enabled){
-        toast.success("Wallet connected");// notify user by a notification
+  useEffect(() => {
+    if (isWeb3Enabled) {
+      toast.success("Wallet connected"); // notify user by a notification
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("connected", "true");
+      }
     }
-  },[ isWeb3Enabled])
+  }, [isWeb3Enabled]);
 
-  useEffect(()=>{
-    if(walletIsDisconnected){
-        toast.error("Wallet disconnected");// notify user by a notification
-        setWalletIsDisconnected(false);// reset the state
+  useEffect(() => {
+    if (walletIsDisconnected) {
+      toast.error("Wallet disconnected"); // notify user by a notification
+      setWalletIsDisconnected(false); // reset the state
     }
-  },[walletIsDisconnected])
+  }, [walletIsDisconnected]);
 
-  useEffect(()=>{
-    if(newAccount && newAccount != detectedAccount){
-        toast.success("Account Changed")
+  useEffect(() => {
+    if (newAccount && newAccount != detectedAccount) {
+      toast.success("Account Changed");
       setDetectedAccount(newAccount);
     }
-  },[newAccount, detectedAccount])
-
-
+  }, [newAccount, detectedAccount]);
 
   console.log("Account list : ", account);
 
@@ -88,13 +136,21 @@ export default function BuySection() {
           >
             <i className="fi fi-sr-wallet"></i> Connect Wallet
           </button>{" "}
-          <div className="w-full bg-white h-[24px] px-4 py-4">
+
+          <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
+            <span className="">Development Testing</span>
+            <span className="">-------------------</span>
             <span className="">
               connected status :{" "}
               {account ? (
-                <span className="text-green-400">
-                  {account.slice(0, 6)}...{account.slice(account.length - 4)}
-                </span>
+                <div className="flex flex-col spacey-y-2">
+                  <span className="text-green-400">
+                    {account.slice(0, 6)}...{account.slice(account.length - 4)}
+                  </span>
+                  <span className="">
+                    Chain : <span className="text-green-400">{parseInt(chain.chainId)}</span>{" "}
+                  </span>
+                </div>
               ) : (
                 <span className="text-red-400">Not Connected</span>
               )}

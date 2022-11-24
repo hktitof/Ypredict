@@ -4,7 +4,7 @@ import CardHeader from "./CardHeader";
 import PreSale from "./PreSale";
 import VideoSection from "./VideoSection";
 /* eslint-disable @next/next/no-img-element */
-export default function HeroSection() {
+export default function HeroSection(props:{showModal,setShowModal}) {
 
 
 
@@ -18,7 +18,7 @@ export default function HeroSection() {
       <br></br>
       <div className="container lg:px-32">
         <div className="row" style={{ marginTop: "0px" }}>
-         {/* <VideoSection/> */}
+         <VideoSection/>
           <div className="col-md-6">
             <div className="card custom-card-buy">
              <CardHeader/>
@@ -123,7 +123,7 @@ export default function HeroSection() {
                       </div>
                     </div>
                     {/* Working Section for Private Sale to Wallet...etc */}
-                    <BuySection/>
+                    <BuySection showModal={props.showModal} setShowModal={props.setShowModal}/>
 
                     <div className="row align-items-center" style={{ backgroundColor: " #fcfcfc ", marginTop: "30px" }}>
                       <div className="col-md-12 pt-4">
