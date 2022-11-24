@@ -18,7 +18,7 @@ import VestingSchedule from "../components/VestingSchedule/VestingSchedule";
 import RoadMap from "../components/RoadMap/RoadMap";
 import FrequentlyAskedQuestions from "../components/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import InterestedVestingNotification from "../components/InterestedVestingNotification/InterestedVestingNotification";
-
+import  { Toaster } from "react-hot-toast";
 export default function Home() {
   return (
     <>
@@ -30,6 +30,31 @@ export default function Home() {
         {/* <HeadLink/> */}
       </Head>
       <div id="main-wrapper">
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={24}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Define default options
+          className: "",
+          duration: 3000,
+          style: {
+            background: "#fff",
+            color: "#000",
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 3000,
+            theme: {
+              primary: "green",
+              secondary: "black",
+            },
+          },
+        }}
+      />
         <Header />
         <HeroSection />
         <TeamPaddnel />

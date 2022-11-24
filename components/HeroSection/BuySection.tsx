@@ -2,9 +2,13 @@ import React from "react";
 import { useMoralis } from "react-moralis";
 import { useEffect } from "react";
 import Lock from "./icon/Lock";
+import toast from "react-hot-toast";
 export default function BuySection() {
   const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
 
+  const [newAccount, setNewAccount] = React.useState<string | null>(null);
+  const [detectedAccount, setDetectedAccount] = React.useState<string | null>(null);
+  const[walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
   const connectButton = async () => {
     await enableWeb3();
     if (typeof window !== "undefined") {
@@ -15,7 +19,10 @@ export default function BuySection() {
   // useEffect : automaticaly run on load, then, it'll run checking the value again
   // check if wallet is connected
   useEffect(() => {
-    if (isWeb3Enabled) return;
+    // check if wallet is connected
+    if (isWeb3Enabled ) {
+        return;
+    }
     if (typeof window !== "undefined") {
       if (typeof localStorage !== "undefined") {
         if (localStorage.getItem("connected") === "true") {
@@ -24,8 +31,9 @@ export default function BuySection() {
         }
       }
     }
-  }, [enableWeb3, isWeb3Enabled]);
+  }, [account, enableWeb3, isWeb3Enabled]);
 
+  // check on Account Changing
   useEffect(() => {
     Moralis.onAccountChanged(account => {
       console.log("Account changed to ", { account });
@@ -33,33 +41,37 @@ export default function BuySection() {
         // if account is null, then user has disconnected all accounts
         window.localStorage.removeItem("connected");
         deactivateWeb3();
+        setWalletIsDisconnected(true);
         console.log("Null account found");
+      } else {
+        setNewAccount(account);
       }
     });
   });
 
-  // Do things when wallet is disconnecting
-  // useEffect(() => {
-  //     Moralis.onAccountChanged(account => {
-  //       if (detectedAccount !== null) {
-  //         if (detectedAccount.localeCompare(account) !== 0) {
-  //           console.log("Account changed to ", account);
-  //           if (account) {
-  //             setDetectedAccount(account);
-  //             setNotifyChangedAccount(true); // this will trigger the toast only when the account is changed
-  //           }
+  useEffect(()=>{
+    if(isWeb3Enabled){
+        toast.success("Wallet connected");// notify user by a notification
+    }
+  },[ isWeb3Enabled])
 
-  //           if (!account) {
-  //             // if there is no account, account == null
-  //             localStorage.removeItem("connected");
-  //             deactivateWeb3();
-  //             setWalletIsDisconnected(true);
-  //             console.log("Null Account detected");
-  //           }
-  //         }
-  //       }
-  //     });
-  //   }, [Moralis, account, deactivateWeb3, detectedAccount]);
+  useEffect(()=>{
+    if(walletIsDisconnected){
+        toast.error("Wallet disconnected");// notify user by a notification
+        setWalletIsDisconnected(false);// reset the state
+    }
+  },[walletIsDisconnected])
+
+  useEffect(()=>{
+    if(newAccount && newAccount != detectedAccount){
+        toast.success("Account Changed")
+      setDetectedAccount(newAccount);
+    }
+  },[newAccount, detectedAccount])
+
+
+
+  console.log("Account list : ", account);
 
   return (
     <div className="relative">
