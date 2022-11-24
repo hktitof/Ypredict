@@ -208,20 +208,52 @@ export default function HeroSection() {
                       </div>
                     </div>
                     <div
-                      className="row align-items-center mt-5 flex justify-center items-center p-3"
-                      style={{ backgroundColor: "#cdfada" }}
-                    >
+                      className="row align-items-center bg-green-50 mt-5 flex justify-center items-center p-3">
                       <div className="col-md-12 ">
-                        <div className="text-center align-middle text-darkgreen" style={{ fontSize: " 13px" }}>
-                          You&apos;re allowlisted for private sale <span></span>
+                        <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
+                          <span className="text-green-700">You&apos;re not allowlisted for private sale</span> 
+                          <button
+                            className="btn bg-green-700 text-white text-md"
+                            style={{ fontSize: "12px" }}
+                            type="button"
+
+                          >
+                            <i className="fi fi-rr-edit"></i> Request Whitelist
+                          </button>
                         </div>
                       </div>
                     </div>
                     {/* Working Section for Private Sale to Wallet...etc */}
                     <div className="relative">
                       {/* Connect Wallet Section */}
-                      <div className="absolute w-full h-full bg-white opacity-70 flex justify-center items-center">
-                          <span className="">Hello</span>
+                      <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center">
+                        <div className="flex flex-col space-y-4 items-center justify-center">
+                          <svg
+                            className="w-28 h-28 "
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="url(#grad1)"
+                          >
+                            <defs>
+                              <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style={{ stopColor: "#f03985", stopOpacity: "1" }} />
+                                <stop offset="100%" style={{ stopColor: "#f03985", stopOpacity: "1" }} />
+                                {/* <stop offset="100%" style={{stopColor:'#f56565',stopOpacity:'1'}} /> */}
+                              </linearGradient>
+                            </defs>
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                            />
+                          </svg>
+                          {/* <p className="text-grad1" style={{fontSize: '100px'}}><i className="fi fi-rr-lock"></i></p> */}
+                          <button className="btn-grad-1 px-4">
+                            <i className="fi fi-sr-wallet"></i> Connect Wallet
+                          </button>{" "}
+                        </div>
                       </div>
                       <div className="row" style={{ marginTop: " 20px" }}>
                         <div className=" col-6 text-center">
