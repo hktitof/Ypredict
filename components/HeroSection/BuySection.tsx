@@ -1,9 +1,11 @@
 import React from "react";
-import { useMoralis, useChain } from "react-moralis";
+import { useMoralis, useChain, useWeb3ExecuteFunction, MoralisProvider } from "react-moralis";
 import { useEffect } from "react";
 import Lock from "./icon/Lock";
 import toast from "react-hot-toast";
-
+import { BigNumber, ethers } from "ethers";
+import { ABI, ContractAddress } from "../../config";
+import { USDC_ABI,USDC_ContractAddress } from "../../USDC_config";
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
@@ -21,47 +23,6 @@ export default function BuySection(props: { showModal; setShowModal }) {
     //   window.localStorage.setItem("connected", "true");
     // }
   };
-
-  //   const activateProvider = async () => {
-  //     const providerOptions = {
-  //       injected: {
-  //         display: {
-  //           name: "Metamask",
-  //           description: "Connect with the provider in your Browser",
-  //         },
-  //         package: null,
-  //       },
-  //       walletconnect: {
-  //         package: WalletConnectProvider,
-  //         options: {
-  //           bridge: "https://bridge.walletconnect.org",
-  //           infuraId: infuraId,
-  //         },
-  //       },
-  //       coinbasewallet: {
-  //         package: CoinbaseWalletSDK,
-  //         options: {
-  //           appName: "Y Predict",
-  //           infuraId: infuraId,
-  //           rpc: rpcUrl,
-  //           chainId: supportedChainId,
-  //           darkMode: false,
-  //         },
-  //       },
-  //     };
-
-  //     const web3Modal = new Web3Modal({
-  //       providerOptions,
-  //     });
-  //     try {
-  //       const provider = await web3Modal.connect();
-  //       //customToast.success('Successfully Connected');
-  //       const response = await activate(provider);
-  //       console.log("response - ", response);
-  //     } catch (error) {
-  //       // customToast.error(error);
-  //     }
-  //   };
 
   // useEffect : automaticaly run on load, then, it'll run checking the value again
   // check if wallet is connected
@@ -121,6 +82,35 @@ export default function BuySection(props: { showModal; setShowModal }) {
 
   console.log("Account list : ", account);
 
+  const clickTestButton = async () => {
+    let provider = Moralis.provider;
+    // const readOptions = {
+    //   contractAddress: USDC_ContractAddress,
+    //   functionName: "allowance",
+    //   abi: USDC_ABI,
+    //   params: {
+    //     owner: account,
+    //     spender: ContractAddress,
+    //   }
+    // };
+
+    // const message = await Moralis.executeFunction(readOptions);
+    // console.log("result of calling s_minAmountToInvest: ", message.toString());
+
+    console.log("-----------------");
+    const sendOptions = {
+      contractAddress: USDC_ContractAddress,
+      functionName: "allowance",
+      abi: USDC_ABI,
+      params: {
+        owner: BigNumber.from(ethers.utils.parseEther("0.00000000000000001")),
+      },
+    };
+
+    const transaction = await Moralis.executeFunction(sendOptions);
+    console.log("Transaction hash: ", transaction);
+
+  };
   return (
     <div className="relative">
       {/* Connect Wallet Section */}
@@ -136,7 +126,9 @@ export default function BuySection(props: { showModal; setShowModal }) {
           >
             <i className="fi fi-sr-wallet"></i> Connect Wallet
           </button>{" "}
-
+          <button onClick={async () => clickTestButton()} className="bg-red-400 px-24 py-3">
+            Click
+          </button>
           <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
             <span className="">Development Testing</span>
             <span className="">-------------------</span>

@@ -18,7 +18,7 @@ export default function HeroSection(props:{showModal,setShowModal}) {
       <br></br>
       <div className="container lg:px-32">
         <div className="row" style={{ marginTop: "0px" }}>
-         <VideoSection/>
+         {/* <VideoSection/> */}
           <div className="col-md-6">
             <div className="card custom-card-buy">
              <CardHeader/>

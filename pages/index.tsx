@@ -20,6 +20,7 @@ import FrequentlyAskedQuestions from "../components/FrequentlyAskedQuestions/Fre
 import InterestedVestingNotification from "../components/InterestedVestingNotification/InterestedVestingNotification";
 import  { Toaster } from "react-hot-toast";
 import { WalletModal,Wallet } from "web3uikit";
+import { useMoralis } from "react-moralis";
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   
@@ -61,7 +62,7 @@ export default function Home() {
       />
         <Header />
         <HeroSection setShowModal={setShowModal} showModal={showModal} />
-        <TeamPaddnel />
+        {/* <TeamPaddnel />
         <PlatformFeature />
         <PlatformPayment />
         <RevenueSharing />
@@ -71,7 +72,7 @@ export default function Home() {
         <VestingSchedule />
         <RoadMap />
         <FrequentlyAskedQuestions />
-        <InterestedVestingNotification />
+        <InterestedVestingNotification /> */}
 
         <Footer />
       </div>
