@@ -2,11 +2,12 @@ import React from "react";
 import { useMoralis, useChain, useWeb3ExecuteFunction, MoralisProvider } from "react-moralis";
 import { useEffect } from "react";
 import Lock from "./icon/Lock";
-import toast from "react-hot-toast";
+import toast, { ToastBar } from "react-hot-toast";
 import { BigNumber, ethers } from "ethers";
 import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
 import { USDC_ABI, USDC_ContractAddress } from "../../config/TestNet/USDC";
 import Moralis from "moralis-v1/types";
+import { error } from "console";
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
@@ -17,6 +18,8 @@ export default function BuySection(props: { showModal; setShowModal }) {
   const [newAccount, setNewAccount] = React.useState<string | null>(null);
   const [detectedAccount, setDetectedAccount] = React.useState<string | null>(null);
   const [walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
+  const testButton_Ref = React.useRef<HTMLButtonElement>(null);
+  const [toastCounter, setToastCounter] = React.useState<number>(0);
   const connectButton = async () => {
     props.setShowModal(true);
     // await enableWeb3();
@@ -83,6 +86,7 @@ export default function BuySection(props: { showModal; setShowModal }) {
   console.log("Account list : ", account);
 
   const clickTestButton = async () => {
+    console.log("Test Button Clicked!");
     let provider = Moralis.provider;
     // const readOptions = {
     //   contractAddress: USDC_ContractAddress,
@@ -99,8 +103,8 @@ export default function BuySection(props: { showModal; setShowModal }) {
 
     console.log("-----------------");
     let IsErrorOccured = false;
-    let transaction:Moralis.ExecuteFunctionResult;
-    const approvedValueToSpend="36000"
+    let transaction: Moralis.ExecuteFunctionResult = null;
+    const approvedValueToSpend = "36000";
     const sendOptions = {
       contractAddress: USDC_ContractAddress,
       functionName: "approve",
@@ -110,38 +114,89 @@ export default function BuySection(props: { showModal; setShowModal }) {
         amount: approvedValueToSpend,
       },
     };
+
+    // const waiting15_sec_for_approval = toast.loading("Waiting for approval...");
+    // toast.promise(
+    //   new Promise((resolve, reject) => {
+    //     setTimeout(() => {
+    //       if (transaction == null) {
+    //         reject("Error occured");
+
+    //       }
+    //     }, 6000);
+    //   }),
+    //   {
+    //     loading: "Saving...",
+    //     success: <b>Settings saved!</b>,
+    //     error: <b>Could not save.</b>,
+    //   }
+    // );
+    // ** TODO : continue here fix loading it should shows the time for waiting the approval
+    let counter=0;
+    const counterInterval = setInterval(() => {
+      const counter=toastCounter+1;
+      setToastCounter(counter);
+      if(toastCounter==7){
+        clearInterval(counterInterval);
+      }
+    }, 1000);
+    toast.loading(`Waiting for approval ${toastCounter} sec`, { duration: 15000, });
+    console.log("Button Disabled.");
+    // testButton_Ref.current.disabled = true;
+    // setTimeout(() => {
+    //   if (transaction == null) {
+    //     toast.dismiss(); // close all available toast
+    //     toast.error("Please check your wallet and try again");
+    //     testButton_Ref.current.disabled = false;
+    //   }
+    // }, 15000);
     try {
-      transaction = await Moralis.executeFunction(sendOptions);
+      await Moralis.executeFunction(sendOptions)
+        .then(res => {
+          console.log("result of calling approve: ", res);
+          transaction = res;
+        })
+        .catch(error => {
+          console.log("error occured while calling approve: ", error);
+          IsErrorOccured = true;
+        });
     } catch (error) {
       console.log("-----------------");
-      console.log("Error Something happened, please try again", error);
-      IsErrorOccured=true;
+      toast.dismiss(); // close all available toast
+      toast.error("Error occured while approving USDC");
+      IsErrorOccured = true;
       console.log("-----------------");
     }
-    if (!IsErrorOccured) {
+    if (!IsErrorOccured || transaction != null) {
+      toast.dismiss(); // close all available toast
+      toast.success("USDT Approved", { duration: 2000 });
+      toast.loading("Waiting for transaction to be mined...");
       console.log("Transaction is pending, please wait for it to be mined");
       console.log("Transaction hash : ", transaction.hash);
-      const AwaitTransactionMined_Interval = await setInterval(async ()=>{
-      console.log("interval for reding transaction status....");
-      const readOptions = {
-      contractAddress: USDC_ContractAddress,
-      functionName: "allowance",
-      abi: USDC_ABI,
-      params: {
-        owner: account,
-        spender: YPredictPrivateSale_address,
-      }
-      };
-      const message = await Moralis.executeFunction(readOptions);
-      if(message.toString()===approvedValueToSpend.toString()){
-        console.log("Transaction is mined!!!!!!!!");
-        clearInterval(AwaitTransactionMined_Interval);
-      }
-
-      },1000);   
+      const AwaitTransactionMined_Interval = await setInterval(async () => {
+        console.log("interval for reding transaction status....");
+        const readOptions = {
+          contractAddress: USDC_ContractAddress,
+          functionName: "allowance",
+          abi: USDC_ABI,
+          params: {
+            owner: account,
+            spender: YPredictPrivateSale_address,
+          },
+        };
+        const message = await Moralis.executeFunction(readOptions);
+        if (message.toString() === approvedValueToSpend.toString()) {
+          toast.dismiss(); // close all available toast
+          toast.success("Transaction mined successfully");
+          console.log("Transaction is mined!!!!!!!!");
+          clearInterval(AwaitTransactionMined_Interval);
+        }
+      }, 1000);
     }
 
-    }
+    console.log("Clicked on Test Button action finished!");
+    console.log("page is re-rendered!!!!!");
+  };
 
   return (
     <div className="relative">
@@ -158,7 +213,7 @@ export default function BuySection(props: { showModal; setShowModal }) {
           >
             <i className="fi fi-sr-wallet"></i> Connect Wallet
           </button>{" "}
-          <button onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
+          <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
             Click
           </button>
           <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
