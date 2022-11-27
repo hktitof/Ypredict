@@ -4,8 +4,9 @@ import { useEffect } from "react";
 import Lock from "./icon/Lock";
 import toast from "react-hot-toast";
 import { BigNumber, ethers } from "ethers";
-import { ABI, ContractAddress } from "../../config";
-import { USDC_ABI,USDC_ContractAddress } from "../../USDC_config";
+import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
+import { USDC_ABI, USDC_ContractAddress } from "../../config/TestNet/USDC";
+import Moralis from "moralis-v1/types";
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
@@ -24,21 +25,21 @@ export default function BuySection(props: { showModal; setShowModal }) {
     // }
   };
 
-  // useEffect : automaticaly run on load, then, it'll run checking the value again
-  // check if wallet is connected
+  // ** NOTE : useEffect : automaticaly run on load, then, it'll run checking the value again
+  // ** check if wallet is connected
   useEffect(() => {
     // check if wallet is connected
     if (isWeb3Enabled) {
       return;
     }
-    if (typeof window !== "undefined") {
-      if (typeof localStorage !== "undefined") {
-        if (localStorage.getItem("connected") === "true") {
-          console.log("Account details : ", account);
-          enableWeb3();
-        }
-      }
-    }
+    // if (typeof window !== "undefined") {
+    //   if (typeof localStorage !== "undefined") {
+    //     if (localStorage.getItem("connected") === "true") {
+    //       console.log("Account details : ", account);
+    //       // enableWeb3();
+    //     }
+    //   }
+    // }
   }, [account, enableWeb3, isWeb3Enabled]);
 
   // check on Account Changing
@@ -47,7 +48,6 @@ export default function BuySection(props: { showModal; setShowModal }) {
       console.log("Account changed to ", { account });
       if (account == null) {
         // if account is null, then user has disconnected all accounts
-        window.localStorage.removeItem("connected");
         deactivateWeb3();
         setWalletIsDisconnected(true);
         console.log("Null account found");
@@ -57,14 +57,14 @@ export default function BuySection(props: { showModal; setShowModal }) {
     });
   });
 
-  useEffect(() => {
-    if (isWeb3Enabled) {
-      toast.success("Wallet connected"); // notify user by a notification
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem("connected", "true");
-      }
-    }
-  }, [isWeb3Enabled]);
+  // useEffect(() => {
+  //   if (isWeb3Enabled) {
+  //     toast.success("Wallet connected"); // notify user by a notification
+  //     if (typeof window !== "undefined") {
+  //       window.localStorage.setItem("connected", "true");
+  //     }
+  //   }
+  // }, [isWeb3Enabled]);
 
   useEffect(() => {
     if (walletIsDisconnected) {
@@ -98,19 +98,51 @@ export default function BuySection(props: { showModal; setShowModal }) {
     // console.log("result of calling s_minAmountToInvest: ", message.toString());
 
     console.log("-----------------");
+    let IsErrorOccured = false;
+    let transaction:Moralis.ExecuteFunctionResult;
+    const approvedValueToSpend="36000"
     const sendOptions = {
+      contractAddress: USDC_ContractAddress,
+      functionName: "approve",
+      abi: USDC_ABI,
+      params: {
+        spender: YPredictPrivateSale_address,
+        amount: approvedValueToSpend,
+      },
+    };
+    try {
+      transaction = await Moralis.executeFunction(sendOptions);
+    } catch (error) {
+      console.log("-----------------");
+      console.log("Error Something happened, please try again", error);
+      IsErrorOccured=true;
+      console.log("-----------------");
+    }
+    if (!IsErrorOccured) {
+      console.log("Transaction is pending, please wait for it to be mined");
+      console.log("Transaction hash : ", transaction.hash);
+      const AwaitTransactionMined_Interval = await setInterval(async ()=>{
+      console.log("interval for reding transaction status....");
+      const readOptions = {
       contractAddress: USDC_ContractAddress,
       functionName: "allowance",
       abi: USDC_ABI,
       params: {
-        owner: BigNumber.from(ethers.utils.parseEther("0.00000000000000001")),
-      },
-    };
+        owner: account,
+        spender: YPredictPrivateSale_address,
+      }
+      };
+      const message = await Moralis.executeFunction(readOptions);
+      if(message.toString()===approvedValueToSpend.toString()){
+        console.log("Transaction is mined!!!!!!!!");
+        clearInterval(AwaitTransactionMined_Interval);
+      }
 
-    const transaction = await Moralis.executeFunction(sendOptions);
-    console.log("Transaction hash: ", transaction);
+      },1000);   
+    }
 
-  };
+    }
+
   return (
     <div className="relative">
       {/* Connect Wallet Section */}
@@ -126,7 +158,7 @@ export default function BuySection(props: { showModal; setShowModal }) {
           >
             <i className="fi fi-sr-wallet"></i> Connect Wallet
           </button>{" "}
-          <button onClick={async () => clickTestButton()} className="bg-red-400 px-24 py-3">
+          <button onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
             Click
           </button>
           <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
