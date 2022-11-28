@@ -18,13 +18,18 @@ import VestingSchedule from "../components/VestingSchedule/VestingSchedule";
 import RoadMap from "../components/RoadMap/RoadMap";
 import FrequentlyAskedQuestions from "../components/FrequentlyAskedQuestions/FrequentlyAskedQuestions";
 import InterestedVestingNotification from "../components/InterestedVestingNotification/InterestedVestingNotification";
-import  { Toaster } from "react-hot-toast";
-import { WalletModal,Wallet } from "web3uikit";
+import { Toaster } from "react-hot-toast";
+import { WalletModal, Wallet } from "web3uikit";
 import { useMoralis } from "react-moralis";
 import ModalBuytoken from "../components/ModalBuytoken/ModalBuytoken";
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [showBuyTokenModal, setShowBuyTokenModal] = useState(false);
+  const [stepsStatus, setStepsStatus] = useState({
+    step_1: { status: "initial" },
+    step_2: { status: "blocked" },
+    step_3: { status: "blocked" },
+  });
   return (
     <>
       <Head>
@@ -35,35 +40,45 @@ export default function Home() {
         {/* <HeadLink/> */}
       </Head>
       <div id="main-wrapper">
-      <WalletModal isOpened={showModal} setIsOpened={setShowModal } />
-      <ModalBuytoken/>
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-        gutter={24}
-        containerClassName=""
-        containerStyle={{}}
-        toastOptions={{
-          // Define default options
-          className: "",
-          duration: 3000,
-          style: {
-            background: "#fff",
-            color: "#000",
-          },
-
-          // Default options for specific types
-          success: {
+        <WalletModal isOpened={showModal} setIsOpened={setShowModal} />
+        <ModalBuytoken
+          stepsStatus={stepsStatus}
+          setStepsStatus={setStepsStatus}
+          showBuyTokenModal={showBuyTokenModal}
+          setShowBuyTokenModal={setShowBuyTokenModal}
+        />
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+          gutter={24}
+          containerClassName=""
+          containerStyle={{}}
+          toastOptions={{
+            // Define default options
+            className: "",
             duration: 3000,
-            theme: {
-              primary: "green",
-              secondary: "black",
+            style: {
+              background: "#fff",
+              color: "#000",
             },
-          },
-        }}
-      />
+
+            // Default options for specific types
+            success: {
+              duration: 3000,
+              theme: {
+                primary: "green",
+                secondary: "black",
+              },
+            },
+          }}
+        />
         <Header />
-        <HeroSection setShowModal={setShowModal} showModal={showModal} />
+        <HeroSection
+          setShowModal={setShowModal}
+          showModal={showModal}
+          showBuyTokenModal={showBuyTokenModal}
+          setShowBuyTokenModal={setShowBuyTokenModal}
+        />
         {/* <TeamPaddnel />
         <PlatformFeature />
         <PlatformPayment />

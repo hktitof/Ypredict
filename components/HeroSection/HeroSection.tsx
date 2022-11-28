@@ -4,10 +4,7 @@ import CardHeader from "./CardHeader";
 import PreSale from "./PreSale";
 import VideoSection from "./VideoSection";
 /* eslint-disable @next/next/no-img-element */
-export default function HeroSection(props:{showModal,setShowModal}) {
-
-
-
+export default function HeroSection(props: { showModal; setShowModal; showBuyTokenModal; setShowBuyTokenModal }) {
   return (
     <div className="hero-section">
       {/* Title */}
@@ -18,10 +15,10 @@ export default function HeroSection(props:{showModal,setShowModal}) {
       <br></br>
       <div className="container lg:px-32">
         <div className="row" style={{ marginTop: "0px" }}>
-         {/* <VideoSection/> */}
+          {/* <VideoSection/> */}
           <div className="col-md-6">
             <div className="card custom-card-buy">
-             <CardHeader/>
+              <CardHeader />
               <div className="card-body">
                 <div className="tab-content mt-3">
                   <div className="tab-pane " id="seed" role="tabpanel">
@@ -72,7 +69,7 @@ export default function HeroSection(props:{showModal,setShowModal}) {
                                 alt=""
                                 style={{ width: "30px", marginLeft: "10px", marginRight: "10px" }}
                               />
-                              Ethereum USDT 
+                              Ethereum USDT
                             </li>
                           </ul>
                         </div>
@@ -106,16 +103,14 @@ export default function HeroSection(props:{showModal,setShowModal}) {
                         </div>
                       </div>
                     </div>
-                    <div
-                      className="row align-items-center bg-green-50 mt-5 flex justify-center items-center p-3">
+                    <div className="row align-items-center bg-green-50 mt-5 flex justify-center items-center p-3">
                       <div className="col-md-12 ">
                         <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
-                          <span className="text-green-700">You&apos;re not allowlisted for private sale</span> 
+                          <span className="text-green-700">You&apos;re not allowlisted for private sale</span>
                           <button
                             className="btn bg-green-700 text-white text-md"
                             style={{ fontSize: "12px" }}
                             type="button"
-
                           >
                             <i className="fi fi-rr-edit"></i> Request Whitelist
                           </button>
@@ -123,7 +118,12 @@ export default function HeroSection(props:{showModal,setShowModal}) {
                       </div>
                     </div>
                     {/* Working Section for Private Sale to Wallet...etc */}
-                    <BuySection showModal={props.showModal} setShowModal={props.setShowModal}/>
+                    <BuySection
+                      showModal={props.showModal}
+                      setShowModal={props.setShowModal}
+                      showBuyTokenModal={props.showBuyTokenModal}
+                      setShowBuyTokenModal={props.setShowBuyTokenModal}
+                    />
 
                     <div className="row align-items-center" style={{ backgroundColor: " #fcfcfc ", marginTop: "30px" }}>
                       <div className="col-md-12 pt-4">
@@ -135,7 +135,7 @@ export default function HeroSection(props:{showModal,setShowModal}) {
                     </div>
                   </div>
 
-                 <PreSale/>
+                  <PreSale />
                   {/* END PRESALE  */}
 
                   <div className="tab-pane" id="public" role="tabpanel" aria-labelledby="deals-tab">

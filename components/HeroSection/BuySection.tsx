@@ -12,7 +12,7 @@ import { error } from "console";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
 
-export default function BuySection(props: { showModal; setShowModal }) {
+export default function BuySection(props: { showModal; setShowModal, showBuyTokenModal, setShowBuyTokenModal }) {
   const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
   const { chain } = useChain();
   const [newAccount, setNewAccount] = React.useState<string | null>(null);
@@ -44,6 +44,10 @@ export default function BuySection(props: { showModal; setShowModal }) {
     //   }
     // }
   }, [account, enableWeb3, isWeb3Enabled]);
+
+
+
+
 
   // check on Account Changing
   useEffect(() => {
@@ -84,6 +88,10 @@ export default function BuySection(props: { showModal; setShowModal }) {
   }, [newAccount, detectedAccount]);
 
   console.log("Account list : ", account);
+
+  const clickTestButton_Action = async () => {
+    props.setShowBuyTokenModal(true);
+  }
 
   const clickTestButton = async () => {
     console.log("Test Button Clicked!");
@@ -213,7 +221,7 @@ export default function BuySection(props: { showModal; setShowModal }) {
           >
             <i className="fi fi-sr-wallet"></i> Connect Wallet
           </button>{" "}
-          <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
+          <button ref={testButton_Ref} onClick={async () => await clickTestButton_Action()} className="bg-red-400 px-24 py-3">
             Click
           </button>
           <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">

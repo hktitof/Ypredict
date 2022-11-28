@@ -1,18 +1,46 @@
 import React from "react";
 import ProgressBar from "./ProgressBar";
+import { useRef, useEffect, useState } from "react";
+const Step_1_initial_waiting = () => {
+  const secondsRef = useRef<HTMLSpanElement>(null);
+  const seconds=useRef<number>(20);
+  // const timerInterval = useRef(null);
+  useEffect(() => {
+    const timerInterval = setInterval(() => {
+      console.log("seconds...timer");
+      if(seconds.current>0){
+        seconds.current--;
+        secondsRef.current!.innerHTML = seconds.current.toString();
+      }else{
+        clearInterval(timerInterval);
+      }
+    }, 1000);
+    return () => clearInterval(timerInterval);
+  }, []);
 
-export default function ModalBuytoken() {
-  const [showModal, setShowModal] = React.useState(false);
+  return (
+    <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
+      <span className="text-xl">Step 1 : Approving USDT transaction</span>
+      <span className="">Please Approve the transaction in your wallet.</span>
+      <span className="">
+        Waiting...<span ref={secondsRef}>{seconds.current}</span> sec
+      </span>
+    </div>
+  );
+};
+
+export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; showBuyTokenModal; setShowBuyTokenModal }) {
+  //   const [showModal, setShowModal] = React.useState(false);
   return (
     <>
-      <button
+      {/* <button
         className="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
         type="button"
-        onClick={() => setShowModal(true)}
+        onClick={() => props.setShowBuyTokenModal(true)}
       >
         Open regular modal
-      </button>
-      {showModal ? (
+      </button> */}
+      {props.showBuyTokenModal ? (
         <>
           <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none px-3 sm:px-0">
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
@@ -25,7 +53,7 @@ export default function ModalBuytoken() {
                   </div>
 
                   <svg
-                    onClick={() => setShowModal(false)}
+                    onClick={() => props.setShowBuyTokenModal(false)}
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -47,13 +75,14 @@ export default function ModalBuytoken() {
                     repellendus quasi laborum dolorum tempore.
                   </p> */}
                   <ProgressBar />
+                  <Step_1_initial_waiting />
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => props.setShowBuyTokenModal(false)}
                   >
                     Close
                   </button>
