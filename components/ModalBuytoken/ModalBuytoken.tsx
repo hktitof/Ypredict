@@ -1,45 +1,128 @@
 import React from "react";
 import ProgressBar from "./ProgressBar";
 import { useRef, useEffect, useState } from "react";
-const Step_1_initial_waiting = () => {
-  const secondsRef = useRef<HTMLSpanElement>(null);
-  const seconds=useRef<number>(20);
-  // const timerInterval = useRef(null);
-  useEffect(() => {
-    const timerInterval = setInterval(() => {
-      console.log("seconds...timer");
-      if(seconds.current>0){
-        seconds.current--;
-        secondsRef.current!.innerHTML = seconds.current.toString();
-      }else{
-        clearInterval(timerInterval);
-      }
-    }, 1000);
-    return () => clearInterval(timerInterval);
-  }, []);
+import toast from "react-hot-toast";
 
+const Step_1_initial_Error = () => {
+  toast.error("Error in Approving USDT transaction");
   return (
     <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
-      <span className="text-xl">Step 1 : Approving USDT transaction</span>
-      <span className="">Please Approve the transaction in your wallet.</span>
-      <span className="">
-        Waiting...<span ref={secondsRef}>{seconds.current}</span> sec
+      <span className="text-xl">Step 1 : Failed Approving USDT transaction</span>
+      <span className="text-center">
+        Oops.. Failed to approve the transaction
+        <br /> close the window and try again
       </span>
+    </div>
+  );
+};
+const Step_1_initial_waiting_transaction_Mining = () => {
+  return (
+    <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
+      <span className="text-xl">Step 1 : Waiting for transaction Receipt</span>
+      <span className="text-center">Please wait a moment for transaction to be mined...</span>
     </div>
   );
 };
 
 export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; showBuyTokenModal; setShowBuyTokenModal }) {
   //   const [showModal, setShowModal] = React.useState(false);
+
+  const Step_1_initial_waiting_approve = () => {
+    const secondsRef = useRef<HTMLSpanElement>(null);
+    const seconds = useRef<number>(30);
+    // const timerInterval = useRef(null);
+    useEffect(() => {
+      const timerInterval = setInterval(() => {
+        console.log("seconds...timer");
+        // if status is still waiting_approve, this will help when user already accepted the transaction
+        // but timer still running so it will close itself, when it is not waiting_approve
+        if (props.stepsStatus.step_1.status === "waiting_approve") {
+          if (seconds.current > 0) {
+            seconds.current--;
+            secondsRef.current!.innerHTML = seconds.current.toString();
+          } else {
+            props.stepsStatus.step_1.status = "error";
+            props.setStepsStatus({ ...props.stepsStatus });
+            clearInterval(timerInterval);
+          }
+        }else{
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+      return () => clearInterval(timerInterval);
+    }, []);
+
+    return (
+      <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
+        <span className="text-center text-lg sm:text-xl">Step 1 : Approving USDT transaction</span>
+        <span className="text-center">Please Approve the transaction in your wallet.</span>
+        <span className="">
+          Waiting...<span ref={secondsRef}>{seconds.current}</span> sec
+        </span>
+        <span className="">
+          <span className="text-red-400">Note : </span>Closing this window will terminate the request
+        </span>
+      </div>
+    );
+  };
+
+  const Step_2_initial_waiting_approve = () => {
+    const secondsRef = useRef<HTMLSpanElement>(null);
+    const seconds = useRef<number>(30);
+    // const timerInterval = useRef(null);
+    useEffect(() => {
+      const timerInterval = setInterval(() => {
+        console.log("seconds...timer");
+        // if status is still waiting_approve, this will help when user already accepted the transaction
+        // but timer still running so it will close itself, when it is not waiting_approve
+        if (props.stepsStatus.step_2.status === "waiting_approve") {
+          if (seconds.current > 0) {
+            seconds.current--;
+            secondsRef.current!.innerHTML = seconds.current.toString();
+          } else {
+            props.stepsStatus.step_2.status = "error";
+            props.setStepsStatus({ ...props.stepsStatus });
+            clearInterval(timerInterval);
+          }
+        }else{
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+      return () => clearInterval(timerInterval);
+    }, []);
+
+    return (
+      <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
+        <span className="text-center text-lg sm:text-xl">Step 2 : Buying YPRED transaction</span>
+        <span className="text-center">Please Approve the transaction in your wallet.</span>
+        <span className="">
+          Waiting...<span ref={secondsRef}>{seconds.current}</span> sec
+        </span>
+        <span className="">
+          <span className="text-red-400">Note : </span>Closing this window will terminate the request
+        </span>
+      </div>
+    );
+  };
+  const GetStepMessage = ({stepsStatus_arg}) => {
+    if (!(stepsStatus_arg.step_1.status === "blocked")) {
+      if (stepsStatus_arg.step_1.status === "waiting_approve") return <Step_1_initial_waiting_approve />;
+      if (stepsStatus_arg.step_1.status === "waiting_transaction_Mining")
+        return <Step_1_initial_waiting_transaction_Mining />;
+      if (stepsStatus_arg.step_1.status === "error"){
+        console.log("it should show this error")
+        return <Step_1_initial_Error />;
+      }
+      // if compiler goes to here it means step 1 is done
+      if(stepsStatus_arg.step_1.status === "success"){
+        // ** TODO : next thing you'll do is working on step 2, by make it waiting_approve
+      } 
+    }
+  };
+  console.log("props.stepsStatus.step_1.status : ", props.stepsStatus.step_1.status);
+
   return (
     <>
-      {/* <button
-        className="bg-pink-500 text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-        type="button"
-        onClick={() => props.setShowBuyTokenModal(true)}
-      >
-        Open regular modal
-      </button> */}
       {props.showBuyTokenModal ? (
         <>
           <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none px-3 sm:px-0">
@@ -49,7 +132,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
                 {/*header*/}
                 <div className="flex items-start justify-between px-5 py-3 border-b border-solid border-slate-200 rounded-t">
                   <div className="hero-title">
-                    <span className="empower">YPRED</span>, Buy Tokens Process.
+                    <span className="empower ">YPRED</span>, Buy Tokens Process.
                   </div>
 
                   <svg
@@ -74,8 +157,13 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
                     assumenda sunt dignissimos eveniet rem voluptatem vero sint, libero natus ab nulla nesciunt,
                     repellendus quasi laborum dolorum tempore.
                   </p> */}
-                  <ProgressBar />
-                  <Step_1_initial_waiting />
+                  <ProgressBar stepsStatus={props.stepsStatus} />
+                  {/* Step Message */}
+                  <GetStepMessage stepsStatus_arg={props.stepsStatus} />
+
+                  {/* <Step_1_initial_waiting_approve /> */}
+                  {/* <Step_1_initial_Error/> */}
+                  {/* <Step_1_initial_waiting_transaction_Mining /> */}
                 </div>
                 {/*footer*/}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">

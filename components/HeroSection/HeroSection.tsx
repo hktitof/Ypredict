@@ -4,7 +4,14 @@ import CardHeader from "./CardHeader";
 import PreSale from "./PreSale";
 import VideoSection from "./VideoSection";
 /* eslint-disable @next/next/no-img-element */
-export default function HeroSection(props: { showModal; setShowModal; showBuyTokenModal; setShowBuyTokenModal }) {
+export default function HeroSection(props: {
+  showModal;
+  setShowModal;
+  showBuyTokenModal;
+  setShowBuyTokenModal;
+  stepsStatus;
+  setStepsStatus;
+}) {
   return (
     <div className="hero-section">
       {/* Title */}
@@ -119,6 +126,8 @@ export default function HeroSection(props: { showModal; setShowModal; showBuyTok
                     </div>
                     {/* Working Section for Private Sale to Wallet...etc */}
                     <BuySection
+                      stepsStatus={props.stepsStatus}
+                      setStepsStatus={props.setStepsStatus}
                       showModal={props.showModal}
                       setShowModal={props.setShowModal}
                       showBuyTokenModal={props.showBuyTokenModal}

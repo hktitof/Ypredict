@@ -12,7 +12,14 @@ import { error } from "console";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
 
-export default function BuySection(props: { showModal; setShowModal, showBuyTokenModal, setShowBuyTokenModal }) {
+export default function BuySection(props: {
+  showModal;
+  setShowModal;
+  showBuyTokenModal;
+  setShowBuyTokenModal;
+  stepsStatus;
+  setStepsStatus;
+}) {
   const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
   const { chain } = useChain();
   const [newAccount, setNewAccount] = React.useState<string | null>(null);
@@ -44,10 +51,6 @@ export default function BuySection(props: { showModal; setShowModal, showBuyToke
     //   }
     // }
   }, [account, enableWeb3, isWeb3Enabled]);
-
-
-
-
 
   // check on Account Changing
   useEffect(() => {
@@ -90,12 +93,18 @@ export default function BuySection(props: { showModal; setShowModal, showBuyToke
   console.log("Account list : ", account);
 
   const clickTestButton_Action = async () => {
+    props.stepsStatus.step_1.status = "waiting_approve";
     props.setShowBuyTokenModal(true);
-  }
+  };
 
   const clickTestButton = async () => {
     console.log("Test Button Clicked!");
-    let provider = Moralis.provider;
+    props.stepsStatus.step_1.status = "waiting_approve";
+    props.setStepsStatus(props.stepsStatus);
+    props.setShowBuyTokenModal(true);
+   
+
+
     // const readOptions = {
     //   contractAddress: USDC_ContractAddress,
     //   functionName: "allowance",
@@ -109,10 +118,11 @@ export default function BuySection(props: { showModal; setShowModal, showBuyToke
     // const message = await Moralis.executeFunction(readOptions);
     // console.log("result of calling s_minAmountToInvest: ", message.toString());
 
+    //** Uncomment here to get the transaction */
     console.log("-----------------");
     let IsErrorOccured = false;
     let transaction: Moralis.ExecuteFunctionResult = null;
-    const approvedValueToSpend = "36000";
+    const approvedValueToSpend = "39000";
     const sendOptions = {
       contractAddress: USDC_ContractAddress,
       functionName: "approve",
@@ -123,64 +133,22 @@ export default function BuySection(props: { showModal; setShowModal, showBuyToke
       },
     };
 
-    // const waiting15_sec_for_approval = toast.loading("Waiting for approval...");
-    // toast.promise(
-    //   new Promise((resolve, reject) => {
-    //     setTimeout(() => {
-    //       if (transaction == null) {
-    //         reject("Error occured");
-
-    //       }
-    //     }, 6000);
-    //   }),
-    //   {
-    //     loading: "Saving...",
-    //     success: <b>Settings saved!</b>,
-    //     error: <b>Could not save.</b>,
-    //   }
-    // );
     // ** TODO : continue here fix loading it should shows the time for waiting the approval
-    let counter=0;
-    const counterInterval = setInterval(() => {
-      const counter=toastCounter+1;
-      setToastCounter(counter);
-      if(toastCounter==7){
-        clearInterval(counterInterval);
-      }
-    }, 1000);
-    toast.loading(`Waiting for approval ${toastCounter} sec`, { duration: 15000, });
-    console.log("Button Disabled.");
-    // testButton_Ref.current.disabled = true;
-    // setTimeout(() => {
-    //   if (transaction == null) {
-    //     toast.dismiss(); // close all available toast
-    //     toast.error("Please check your wallet and try again");
-    //     testButton_Ref.current.disabled = false;
-    //   }
-    // }, 15000);
-    try {
-      await Moralis.executeFunction(sendOptions)
-        .then(res => {
-          console.log("result of calling approve: ", res);
-          transaction = res;
-        })
-        .catch(error => {
-          console.log("error occured while calling approve: ", error);
-          IsErrorOccured = true;
-        });
-    } catch (error) {
-      console.log("-----------------");
-      toast.dismiss(); // close all available toast
-      toast.error("Error occured while approving USDC");
-      IsErrorOccured = true;
-      console.log("-----------------");
-    }
+    await Moralis.executeFunction(sendOptions)
+      .then(res => {
+        console.log("result of calling approve: ", res);
+        transaction = res;
+      })
+      .catch(error => {
+        console.log("error Occured while calling approve: ", error);
+        IsErrorOccured = true;
+        props.stepsStatus.step_1.status = "error";
+        props.setStepsStatus({...props.stepsStatus});
+      });
+
     if (!IsErrorOccured || transaction != null) {
-      toast.dismiss(); // close all available toast
-      toast.success("USDT Approved", { duration: 2000 });
-      toast.loading("Waiting for transaction to be mined...");
-      console.log("Transaction is pending, please wait for it to be mined");
-      console.log("Transaction hash : ", transaction.hash);
+      props.stepsStatus.step_1.status = "waiting_transaction_Mining";
+      props.setStepsStatus({...props.stepsStatus});
       const AwaitTransactionMined_Interval = await setInterval(async () => {
         console.log("interval for reding transaction status....");
         const readOptions = {
@@ -194,7 +162,8 @@ export default function BuySection(props: { showModal; setShowModal, showBuyToke
         };
         const message = await Moralis.executeFunction(readOptions);
         if (message.toString() === approvedValueToSpend.toString()) {
-          toast.dismiss(); // close all available toast
+          props.stepsStatus.step_1.status = "success";
+          props.setStepsStatus({...props.stepsStatus});
           toast.success("Transaction mined successfully");
           console.log("Transaction is mined!!!!!!!!");
           clearInterval(AwaitTransactionMined_Interval);
@@ -203,8 +172,8 @@ export default function BuySection(props: { showModal; setShowModal, showBuyToke
     }
 
     console.log("Clicked on Test Button action finished!");
-    console.log("page is re-rendered!!!!!");
   };
+  console.log("ButSection is re-rendered!!!!!");
 
   return (
     <div className="relative">
@@ -221,7 +190,11 @@ export default function BuySection(props: { showModal; setShowModal, showBuyToke
           >
             <i className="fi fi-sr-wallet"></i> Connect Wallet
           </button>{" "}
-          <button ref={testButton_Ref} onClick={async () => await clickTestButton_Action()} className="bg-red-400 px-24 py-3">
+          <button
+            ref={testButton_Ref}
+            onClick={async () => await clickTestButton()}
+            className="bg-red-400 px-24 py-3"
+          >
             Click
           </button>
           <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
