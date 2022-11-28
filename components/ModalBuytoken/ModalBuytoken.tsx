@@ -4,10 +4,20 @@ import { useRef, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const Step_1_initial_Error = () => {
-  toast.error("Error in Approving USDT transaction");
   return (
     <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
       <span className="text-xl">Step 1 : Failed Approving USDT transaction</span>
+      <span className="text-center">
+        Oops.. Failed to approve the transaction
+        <br /> close the window and try again
+      </span>
+    </div>
+  );
+};
+const Step_2_initial_Error = () => {
+  return (
+    <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
+      <span className="text-xl">Step 2 : Failed Buying YPRED Token transaction</span>
       <span className="text-center">
         Oops.. Failed to approve the transaction
         <br /> close the window and try again
@@ -33,7 +43,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
     // const timerInterval = useRef(null);
     useEffect(() => {
       const timerInterval = setInterval(() => {
-        console.log("seconds...timer");
+        console.log("seconds...timer step 1");
         // if status is still waiting_approve, this will help when user already accepted the transaction
         // but timer still running so it will close itself, when it is not waiting_approve
         if (props.stepsStatus.step_1.status === "waiting_approve") {
@@ -45,7 +55,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
             props.setStepsStatus({ ...props.stepsStatus });
             clearInterval(timerInterval);
           }
-        }else{
+        } else {
           clearInterval(timerInterval);
         }
       }, 1000);
@@ -72,7 +82,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
     // const timerInterval = useRef(null);
     useEffect(() => {
       const timerInterval = setInterval(() => {
-        console.log("seconds...timer");
+        console.log("seconds...timer step 2");
         // if status is still waiting_approve, this will help when user already accepted the transaction
         // but timer still running so it will close itself, when it is not waiting_approve
         if (props.stepsStatus.step_2.status === "waiting_approve") {
@@ -84,7 +94,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
             props.setStepsStatus({ ...props.stepsStatus });
             clearInterval(timerInterval);
           }
-        }else{
+        } else {
           clearInterval(timerInterval);
         }
       }, 1000);
@@ -93,7 +103,9 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
 
     return (
       <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
-        <span className="text-center text-lg sm:text-xl">Step 2 : Buying YPRED transaction</span>
+        <span className="text-center text-lg sm:text-xl">
+          Step 2 : Buying YPRED - Waiting approving the transaction.
+        </span>
         <span className="text-center">Please Approve the transaction in your wallet.</span>
         <span className="">
           Waiting...<span ref={secondsRef}>{seconds.current}</span> sec
@@ -104,19 +116,19 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
       </div>
     );
   };
-  const GetStepMessage = ({stepsStatus_arg}) => {
+  const GetStepMessage = ({ stepsStatus_arg }) => {
     if (!(stepsStatus_arg.step_1.status === "blocked")) {
       if (stepsStatus_arg.step_1.status === "waiting_approve") return <Step_1_initial_waiting_approve />;
       if (stepsStatus_arg.step_1.status === "waiting_transaction_Mining")
         return <Step_1_initial_waiting_transaction_Mining />;
-      if (stepsStatus_arg.step_1.status === "error"){
-        console.log("it should show this error")
-        return <Step_1_initial_Error />;
-      }
+      if (stepsStatus_arg.step_1.status === "error") return <Step_1_initial_Error />;
+
       // if compiler goes to here it means step 1 is done
-      if(stepsStatus_arg.step_1.status === "success"){
+      if (stepsStatus_arg.step_1.status === "success") {
         // ** TODO : next thing you'll do is working on step 2, by make it waiting_approve
-      } 
+        if (stepsStatus_arg.step_2.status === "waiting_approve") return <Step_2_initial_waiting_approve />;
+        if (stepsStatus_arg.step_2.status === "error") return <Step_2_initial_Error />;
+      }
     }
   };
   console.log("props.stepsStatus.step_1.status : ", props.stepsStatus.step_1.status);
@@ -170,7 +182,14 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => props.setShowBuyTokenModal(false)}
+                    onClick={() => {
+                      props.setStepsStatus({
+                        step_1: { status: "blocked" },
+                        step_2: { status: "blocked" },
+                        step_3: { status: "blocked" },
+                      });
+                      props.setShowBuyTokenModal(false);
+                    }}
                   >
                     Close
                   </button>

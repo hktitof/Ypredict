@@ -25,6 +25,7 @@ import ModalBuytoken from "../components/ModalBuytoken/ModalBuytoken";
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [showBuyTokenModal, setShowBuyTokenModal] = useState(false);
+  
   /**
    * @note: iconStatus : waiting, success, error
    * @note: status : waiting_approve, waiting_transaction_Mining, success, error

@@ -26,7 +26,8 @@ export default function BuySection(props: {
   const [detectedAccount, setDetectedAccount] = React.useState<string | null>(null);
   const [walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
   const testButton_Ref = React.useRef<HTMLButtonElement>(null);
-  const [toastCounter, setToastCounter] = React.useState<number>(0);
+  const [userNumberOfTokens, setUserNumberOfTokens] = React.useState(0);
+
   const connectButton = async () => {
     props.setShowModal(true);
     // await enableWeb3();
@@ -66,15 +67,18 @@ export default function BuySection(props: {
       }
     });
   });
+  useEffect(() => {
+    if (isWeb3Enabled) {
+      // ** Todo : continue grap how much token the user has, so you can use it later
+      //**  to check if a user has succefully bough new token and the transaction is mined
+    }
+  }, [isWeb3Enabled]);
 
-  // useEffect(() => {
-  //   if (isWeb3Enabled) {
-  //     toast.success("Wallet connected"); // notify user by a notification
-  //     if (typeof window !== "undefined") {
-  //       window.localStorage.setItem("connected", "true");
-  //     }
-  //   }
-  // }, [isWeb3Enabled]);
+  useEffect(() => {
+    if (isWeb3Enabled) {
+      toast.success("Wallet connected"); // notify user by a notification
+    }
+  }, [isWeb3Enabled]);
 
   useEffect(() => {
     if (walletIsDisconnected) {
@@ -102,8 +106,6 @@ export default function BuySection(props: {
     props.stepsStatus.step_1.status = "waiting_approve";
     props.setStepsStatus(props.stepsStatus);
     props.setShowBuyTokenModal(true);
-   
-
 
     // const readOptions = {
     //   contractAddress: USDC_ContractAddress,
@@ -122,7 +124,7 @@ export default function BuySection(props: {
     console.log("-----------------");
     let IsErrorOccured = false;
     let transaction: Moralis.ExecuteFunctionResult = null;
-    const approvedValueToSpend = "39000";
+    const approvedValueToSpend = "36000";
     const sendOptions = {
       contractAddress: USDC_ContractAddress,
       functionName: "approve",
@@ -142,15 +144,16 @@ export default function BuySection(props: {
       .catch(error => {
         console.log("error Occured while calling approve: ", error);
         IsErrorOccured = true;
+        toast.error("Error in Approving USDT transaction");
         props.stepsStatus.step_1.status = "error";
-        props.setStepsStatus({...props.stepsStatus});
+        props.setStepsStatus({ ...props.stepsStatus });
       });
 
     if (!IsErrorOccured || transaction != null) {
       props.stepsStatus.step_1.status = "waiting_transaction_Mining";
-      props.setStepsStatus({...props.stepsStatus});
+      props.setStepsStatus({ ...props.stepsStatus });
       const AwaitTransactionMined_Interval = await setInterval(async () => {
-        console.log("interval for reding transaction status....");
+        console.log("interval for waiting step 1 transaction status....");
         const readOptions = {
           contractAddress: USDC_ContractAddress,
           functionName: "allowance",
@@ -163,16 +166,47 @@ export default function BuySection(props: {
         const message = await Moralis.executeFunction(readOptions);
         if (message.toString() === approvedValueToSpend.toString()) {
           props.stepsStatus.step_1.status = "success";
-          props.setStepsStatus({...props.stepsStatus});
+          props.setStepsStatus({ ...props.stepsStatus });
           toast.success("Transaction mined successfully");
           console.log("Transaction is mined!!!!!!!!");
           clearInterval(AwaitTransactionMined_Interval);
+          // ** next step 2 : request to approve the transaction
+          props.stepsStatus.step_2.status = "waiting_approve";
+          props.setStepsStatus({ ...props.stepsStatus });
+
+          const sendOptions = {
+            contractAddress: YPredictPrivateSale_address,
+            functionName: "buyTokens",
+            abi: YPredictPrivateSale_ABI,
+            params: {
+              amount: "1",
+            },
+          };
+          let transaction: Moralis.ExecuteFunctionResult = null;
+          let IsErrorOccured = false;
+          await Moralis.executeFunction(sendOptions)
+            .then(res => {
+              console.log("result of calling buyTokens: ", res);
+              transaction = res;
+            })
+            .catch(error => {
+              console.log("error Occured while calling approve: ", error);
+              IsErrorOccured = true;
+              toast.error("Error Occured while approving transaction");
+              props.stepsStatus.step_2.status = "error";
+              props.setStepsStatus({ ...props.stepsStatus });
+            });
+          if (!IsErrorOccured || transaction != null) {
+            props.stepsStatus.step_2.status = "waiting_transaction_Mining";
+            props.setStepsStatus({ ...props.stepsStatus });
+          }
         }
       }, 1000);
     }
 
     console.log("Clicked on Test Button action finished!");
   };
+
   console.log("ButSection is re-rendered!!!!!");
 
   return (
@@ -190,11 +224,7 @@ export default function BuySection(props: {
           >
             <i className="fi fi-sr-wallet"></i> Connect Wallet
           </button>{" "}
-          <button
-            ref={testButton_Ref}
-            onClick={async () => await clickTestButton()}
-            className="bg-red-400 px-24 py-3"
-          >
+          <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
             Click
           </button>
           <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">

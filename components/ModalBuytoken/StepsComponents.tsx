@@ -7,8 +7,16 @@ const getStatusIcon = status => {
   return <></>;
 };
 
+const getLineColor= status => {
+  if (status === "blocked") return "bg-gray-300";
+  if (status === "waiting_approve") return "bg-blue-500";
+  if (status === "waiting_transaction_Mining") return "bg-blue-500";
+  if (status === "error") return "bg-red-500";
+  if (status === "success") return "bg-green-400";
+  return <></>;
+}
+
 export const Step_1 = (props: { status }) => {
-  console.log("Progress stipper status : ",props.status)
   return (
     <>
       <div className="flex flex-row  items-center space-x-1 flex-none">
@@ -18,14 +26,14 @@ export const Step_1 = (props: { status }) => {
         </div>
         <span className="">step 1</span>
       </div>
-      <div className="w-full h-[3px] rounded-xl bg-gray-300"></div>
+      <div className={`w-full h-[3px] rounded-xl ${getLineColor(props.status)}`}></div>
     </>
   );
 };
 export const Step_2 = (props: { status }) => {
   return (
     <>
-      <div className="w-full h-[3px] rounded-xl bg-gray-300"></div>
+      <div className={`w-full h-[3px] rounded-xl ${getLineColor(props.status)}`}></div>
       <div className="flex flex-row  items-center space-x-1 flex-none">
         <div className="h-6 w-6 rounded-full">
         {/* Icon Status */}
@@ -34,14 +42,14 @@ export const Step_2 = (props: { status }) => {
 
         <span className="">step 2</span>
       </div>
-      <div className="w-full h-[3px] rounded-xl bg-gray-300"></div>
+      <div className={`w-full h-[3px] rounded-xl ${getLineColor(props.status)}`}></div>
     </>
   );
 };
 export const Step_3 = (props: { status }) => {
   return (
     <>
-      <div className="w-full h-[3px] rounded-xl bg-gray-300"></div>
+      <div className={`w-full h-[3px] rounded-xl ${getLineColor(props.status)}`}></div>
       <div className="flex flex-row  items-center space-x-1 flex-none">
         <div className="h-6 w-6 rounded-full">
           {/* Icon Status */}
