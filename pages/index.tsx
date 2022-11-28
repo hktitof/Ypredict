@@ -21,9 +21,10 @@ import InterestedVestingNotification from "../components/InterestedVestingNotifi
 import  { Toaster } from "react-hot-toast";
 import { WalletModal,Wallet } from "web3uikit";
 import { useMoralis } from "react-moralis";
+import ModalBuytoken from "../components/ModalBuytoken/ModalBuytoken";
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
-  
+  const [showBuyTokenModal, setShowBuyTokenModal] = useState(false);
   return (
     <>
       <Head>
@@ -35,6 +36,7 @@ export default function Home() {
       </Head>
       <div id="main-wrapper">
       <WalletModal isOpened={showModal} setIsOpened={setShowModal } />
+      <ModalBuytoken/>
       <Toaster
         position="top-center"
         reverseOrder={false}
