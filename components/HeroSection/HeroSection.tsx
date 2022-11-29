@@ -110,20 +110,7 @@ export default function HeroSection(props: {
                         </div>
                       </div>
                     </div>
-                    <div className="row align-items-center bg-green-50 mt-5 flex justify-center items-center p-3">
-                      <div className="col-md-12 ">
-                        <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
-                          <span className="text-green-700">You&apos;re not allowlisted for private sale</span>
-                          <button
-                            className="btn bg-green-700 text-white text-md"
-                            style={{ fontSize: "12px" }}
-                            type="button"
-                          >
-                            <i className="fi fi-rr-edit"></i> Request Whitelist
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    
                     {/* Working Section for Private Sale to Wallet...etc */}
                     <BuySection
                       stepsStatus={props.stepsStatus}

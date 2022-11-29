@@ -7,6 +7,7 @@ import { BigNumber, ethers } from "ethers";
 import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
 import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
 import { USDC_ABI, USDC_ContractAddress } from "../../config/TestNet/USDC";
+import { whitelist } from "../../config/whitelist/whitelist";
 
 import { error } from "console";
 import Moralis from "moralis-v1/types";
@@ -121,7 +122,7 @@ export default function BuySection(props: {
   // ** Notify user wallet is connected
   useEffect(() => {
     if (isWeb3Enabled) {
-      toast.success("Wallet connected"); // notify user by a notification
+      toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
     }
   }, [isWeb3Enabled]);
   // ** Notify user if the wallet is disconnected
@@ -135,7 +136,7 @@ export default function BuySection(props: {
   // ** Notify Account is changed
   useEffect(() => {
     if (newAccount && newAccount != detectedAccount) {
-      toast.success("Account Changed");
+      toast.success(`Account changed ${account.slice(0, 6)}...${account.slice(account.length - 4)}`);
       setDetectedAccount(newAccount);
     }
   }, [newAccount, detectedAccount]);
@@ -218,8 +219,8 @@ export default function BuySection(props: {
         const message = await Moralis.executeFunction(readOptions);
         // TODO : continue here, you need to fix MaxListern\ExceedeWarnings by copying code from here, and put it in another interval
         const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
-        .mul(BigNumber.from(ypredUSDT_price_PerToekn))
-        .toString();
+          .mul(BigNumber.from(ypredUSDT_price_PerToekn))
+          .toString();
         if (message.toString() === approvedValueToSpend.toString()) {
           props.stepsStatus.step_1.status = "success";
           props.setStepsStatus({ ...props.stepsStatus });
@@ -235,7 +236,7 @@ export default function BuySection(props: {
   // ** this will execture when is_step_2_begin is changed to true, that means step 1 is done, and step 2 is begining
   useEffect(() => {
     if (Is_step_2_begin) {
-      setIs_step_2_begin(false);// stop this to not execute next time
+      setIs_step_2_begin(false); // stop this to not execute next time
       const step2 = async () => {
         console.log("Step 2 is begining*********************************");
         // ** next step 2 : request to approve the transaction
@@ -265,7 +266,7 @@ export default function BuySection(props: {
             //* create this interval when transaction is not null
             if (transaction != null) {
               props.stepsStatus.step_2.status = "waiting_transaction_Mining";
-        props.setStepsStatus({ ...props.stepsStatus });
+              props.setStepsStatus({ ...props.stepsStatus });
               const AwaitTransactionMined_Interval = setInterval(async () => {
                 console.log("Interval for waiting step 2 transaction status....");
                 const readOptions = {
@@ -297,7 +298,8 @@ export default function BuySection(props: {
                   props.stepsStatus.step_2.status = "success";
                   props.stepsStatus.step_3.status = "success";
                   props.setStepsStatus({ ...props.stepsStatus });
-                  toast.success("Transaction mined successfully");
+                  toast.success("Transaction is Confirmed");
+                  setUserNumberOfTokens(allocatedToken_After.split(".")[0]); // set user new number of tokens
                   setIs_step_2_begin(false); // return false to the state step 2
                   clearInterval(AwaitTransactionMined_Interval);
                 }
@@ -320,89 +322,113 @@ export default function BuySection(props: {
 
   console.log("ButSection is re-rendered!!!!!");
 
+  const IsAllowListed_And_Connected = userAddress => {
+    // ** if it's not allowlisted, it will return true, then it will return following jsx
+    if (whitelist.includes(userAddress)) {
+      return (
+        <div className="row align-items-center bg-green-50 mt-4 flex justify-center items-center p-3">
+          <div className="col-md-12 ">
+            <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
+              <span className="text-green-700">You&apos;re not allowlisted for private sale</span>
+              <button className="btn bg-green-700 text-white text-md" style={{ fontSize: "12px" }} type="button">
+                <i className="fi fi-rr-edit"></i> Request Whitelist
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  };
+  const IsConnected_ = userAddress => {}
+
   return (
-    <div className="relative">
-      {/* Connect Wallet Section */}
-      <div className="absolute w-full h-full bg-white opacity-70 flex justify-center items-center"></div>
-      <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
-        <div className="flex flex-col space-y-4 items-center justify-center ">
-          <Lock />
-          {/* <p className="text-grad1" style={{fontSize: '100px'}}><i className="fi fi-rr-lock"></i></p> */}
-          <button
-            onClick={async () => await connectButton()}
-            disabled={isWeb3EnableLoading}
-            className="btn-grad-1 px-4"
-          >
-            <i className="fi fi-sr-wallet"></i> Connect Wallet
-          </button>{" "}
-          <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
+    <>
+      {/* Your are not Whitelisted */}
+     {account ? IsAllowListed_And_Connected(account):<></>}
+      <div className="relative">
+        {/* Connect Wallet Section */}
+
+        <div className="absolute w-full h-full bg-white opacity-70 flex justify-center items-center"></div>
+        <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
+          <div className="flex flex-col space-y-4 items-center justify-center ">
+            <Lock />
+            <button
+              onClick={async () => await connectButton()}
+              disabled={isWeb3EnableLoading}
+              className="btn-grad-1 px-4"
+            >
+              <i className="fi fi-sr-wallet"></i> Connect Wallet
+            </button>{" "}
+            {/* <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
             Click
-          </button>
-          <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
+            </button>
+            <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
             <span className="">Development Testing</span>
             <span className="">-------------------</span>
             <span className="">
-              connected status :{" "}
-              {account ? (
-                <div className="flex flex-col spacey-y-2">
-                  <span className="text-green-400">
-                    {account.slice(0, 6)}...{account.slice(account.length - 4)}
-                  </span>
-                  <span className="">
-                    Chain : <span className="text-green-400">{parseInt(chain.chainId)}</span>{" "}
-                  </span>
-                </div>
+            connected status :{" "}
+            {account ? (
+              <div className="flex flex-col spacey-y-2">
+              <span className="text-green-400">
+              {account.slice(0, 6)}...{account.slice(account.length - 4)}
+              </span>
+              <span className="">
+              Chain : <span className="text-green-400">{parseInt(chain.chainId)}</span>{" "}
+              </span>
+              </div>
               ) : (
                 <span className="text-red-400">Not Connected</span>
-              )}
-            </span>
+                )}
+                </span>
+              </div> */}
+          </div>
+        </div>
+
+        <div className="row" style={{ marginTop: " 20px" }}>
+          <div className=" col-6 text-center">
+            <p className="text-dark2 text-box-sub-title"> Private Sale Price</p>
+            <p className="text-box-content"> $0.036</p>
+          </div>
+          <div className=" col-6 text-center">
+            <p className="text-dark2 text-box-sub-title "> Private Sale Goal</p>
+            <p className="text-box-content"> $72,000</p>
+          </div>
+        </div>
+        <div className="row" style={{ marginTop: " 20px" }}>
+          <div className=" col-6 text-center">
+            <p className="text-dark2 text-box-sub-title"> Listing Price</p>
+            <p className="text-box-content">$0.045</p>
+          </div>
+          <div className=" col-6 text-center">
+            <p className="text-dark2 text-box-sub-title"> ROI at Listing</p>
+            <p className="text-box-content">25%</p>
+          </div>
+        </div>
+        <div className="row text-center items-center" style={{ marginTop: " 20px" }}>
+          <div className="col-8">
+            <input type="number" className="input-buy border-4 text-center" placeholder="please input amount of USDT" />
+          </div>
+          {/* <input type="number" className="border-4 border-rose-800" placeholder="please input amount of USDT"/> */}
+          <div className="col-4 text-start ">
+            <div className="flex flex-row space-x-2 items-center fw-semibold">
+              =
+              <img src="/ypred-coin.png" alt="" style={{ width: " 30px", marginLeft: " 10px" }} />
+              <span id="ypred-amount">0</span>
+            </div>
+          </div>
+        </div>
+        <div className="w-full row text-center" style={{ marginTop: " 20px" }}>
+          <div className="w-full flex flex-row justify-center space-x-2">
+            <button className="btn-grad-1 flex ">
+              <i className="fi fi-sr-wallet"></i> Buy with Metamask
+            </button>
+
+            <button className="btn-grad-1 ">
+              <i className="fi fi-sr-interrogation"></i> Need Help
+            </button>
           </div>
         </div>
       </div>
-
-      <div className="row" style={{ marginTop: " 20px" }}>
-        <div className=" col-6 text-center">
-          <p className="text-dark2 text-box-sub-title"> Private Sale Price</p>
-          <p className="text-box-content"> $0.036</p>
-        </div>
-        <div className=" col-6 text-center">
-          <p className="text-dark2 text-box-sub-title "> Private Sale Goal</p>
-          <p className="text-box-content"> $72,000</p>
-        </div>
-      </div>
-      <div className="row" style={{ marginTop: " 20px" }}>
-        <div className=" col-6 text-center">
-          <p className="text-dark2 text-box-sub-title"> Listing Price</p>
-          <p className="text-box-content">$0.045</p>
-        </div>
-        <div className=" col-6 text-center">
-          <p className="text-dark2 text-box-sub-title"> ROI at Listing</p>
-          <p className="text-box-content">25%</p>
-        </div>
-      </div>
-      <div className="row text-center" style={{ marginTop: " 20px" }}>
-        <div className="col-8">
-          <input type="number" className="input-buy text-center" placeholder="please input amount of USDT" />
-        </div>
-        <div className="col-4 text-start ">
-          <div className="flex flex-row space-x-2 items-center fw-semibold">
-            =
-            <img src="/ypred-coin.png" alt="" style={{ width: " 30px", marginTop: " 0px", marginLeft: " 10px" }} />
-            <span id="ypred-amount">0</span>
-          </div>
-        </div>
-      </div>
-      <div className="w-full row text-center" style={{ marginTop: " 20px" }}>
-        <div className="w-full flex flex-row justify-center space-x-2">
-          <button className="btn-grad-1 flex ">
-            <i className="fi fi-sr-wallet"></i> Buy with Metamask
-          </button>
-
-          <button className="btn-grad-1 ">
-            <i className="fi fi-sr-interrogation"></i> Need Help
-          </button>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
