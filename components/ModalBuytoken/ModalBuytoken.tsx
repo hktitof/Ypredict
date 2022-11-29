@@ -60,7 +60,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
     // const timerInterval = useRef(null);
     useEffect(() => {
       const timerInterval = setInterval(() => {
-        console.log("seconds...timer step 1");
+        console.log("Interval seconds timer for step 1");
         // if status is still waiting_approve, this will help when user already accepted the transaction
         // but timer still running so it will close itself, when it is not waiting_approve
         if (props.stepsStatus.step_1.status === "waiting_approve") {
@@ -99,7 +99,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
     // const timerInterval = useRef(null);
     useEffect(() => {
       const timerInterval = setInterval(() => {
-        console.log("seconds...timer step 2");
+        console.log("Interval seconds timer for step 2");
         // if status is still waiting_approve, this will help when user already accepted the transaction
         // but timer still running so it will close itself, when it is not waiting_approve
         if (props.stepsStatus.step_2.status === "waiting_approve") {
