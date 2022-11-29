@@ -33,6 +33,23 @@ const Step_1_initial_waiting_transaction_Mining = () => {
     </div>
   );
 };
+const Step_2_initial_waiting_transaction_Mining = () => {
+  return (
+    <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
+      <span className="text-xl">Step 2 : Waiting for transaction Receipt</span>
+      <span className="text-center">Please wait a moment for transaction to be mined...</span>
+    </div>
+  );
+};
+
+const Step_3_success = () => {
+  return (
+    <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
+      <span className="text-xl">Step 3 : Transaction Confirmed</span>
+      <span className="text-center">You have been successfully bought YPRED Token</span>
+    </div>
+  );
+};
 
 export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; showBuyTokenModal; setShowBuyTokenModal }) {
   //   const [showModal, setShowModal] = React.useState(false);
@@ -128,6 +145,8 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
         // ** TODO : next thing you'll do is working on step 2, by make it waiting_approve
         if (stepsStatus_arg.step_2.status === "waiting_approve") return <Step_2_initial_waiting_approve />;
         if (stepsStatus_arg.step_2.status === "error") return <Step_2_initial_Error />;
+        if (stepsStatus_arg.step_2.status === "waiting_transaction_Mining") return <Step_2_initial_waiting_transaction_Mining/>
+        if(stepsStatus_arg.step_2.status === "success") return <Step_3_success/>
       }
     }
   };

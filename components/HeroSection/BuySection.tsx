@@ -5,12 +5,43 @@ import Lock from "./icon/Lock";
 import toast, { ToastBar } from "react-hot-toast";
 import { BigNumber, ethers } from "ethers";
 import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
+import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
 import { USDC_ABI, USDC_ContractAddress } from "../../config/TestNet/USDC";
-import Moralis from "moralis-v1/types";
+
 import { error } from "console";
+import Moralis from "moralis-v1/types";
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
+
+/**
+ * @name: get Allocated amount of YPredict token for the user from the contract PrivateSaleVesting
+ * @action: result of this function, it will set the state of userNUmberOfTokens
+ * @param userAddress : User Address
+ * @param contract_Address : Contract Address
+ * @param Contract_ABI : Contract ABI
+ * @param useState_UserNumberOfTokens : useState for User Number of Tokens
+ * @param Moralis : it's from useMoralis
+ *
+ */
+const GetUserAllocatedTokens = async (
+  userAddress: string,
+  contract_Address,
+  Contract_ABI,
+  useState_UserNumberOfTokens,
+  Moralis
+) => {
+  const readOptions = {
+    contractAddress: contract_Address,
+    functionName: "getAllocatedTokens",
+    abi: Contract_ABI,
+    params: {
+      beneficiary: userAddress,
+    },
+  };
+  const message = await Moralis.executeFunction(readOptions);
+  useState_UserNumberOfTokens(message);
+};
 
 export default function BuySection(props: {
   showModal;
@@ -26,7 +57,9 @@ export default function BuySection(props: {
   const [detectedAccount, setDetectedAccount] = React.useState<string | null>(null);
   const [walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
   const testButton_Ref = React.useRef<HTMLButtonElement>(null);
-  const [userNumberOfTokens, setUserNumberOfTokens] = React.useState(0);
+  const [userNumberOfTokens, setUserNumberOfTokens] = React.useState(null); // this will the number of tokens allocated to the user from the contract PrivateSaleVesting
+  const [ypredAmountToBuy, setYpredAmountToBuy] = React.useState("2"); // this will be the amount of YPredict token to buy
+  const [ypredUSDT_price_PerToekn, setYpredUSDT_price_PerToekn] = React.useState("36000"); // this will be the price of YPredict token in USDT
 
   const connectButton = async () => {
     props.setShowModal(true);
@@ -68,11 +101,19 @@ export default function BuySection(props: {
     });
   });
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isWeb3Enabled && account) {
+      console.log("useEffect() is executed..... getting user allocated tokens");
       // ** Todo : continue grap how much token the user has, so you can use it later
       //**  to check if a user has succefully bough new token and the transaction is mined
+      GetUserAllocatedTokens(
+        account,
+        PrivateSaleVesting_Address,
+        PrivateSaleVesting_ABI,
+        setUserNumberOfTokens,
+        Moralis
+      );
     }
-  }, [isWeb3Enabled]);
+  }, [Moralis, account, isWeb3Enabled]);
 
   useEffect(() => {
     if (isWeb3Enabled) {
@@ -94,7 +135,11 @@ export default function BuySection(props: {
     }
   }, [newAccount, detectedAccount]);
 
+  //** Display values when com is re-rendered
   console.log("Account list : ", account);
+  if (userNumberOfTokens) {
+    console.log("User Allocated Tokens : ", ethers.utils.formatEther(userNumberOfTokens.toString()));
+  }
 
   const clickTestButton_Action = async () => {
     props.stepsStatus.step_1.status = "waiting_approve";
@@ -122,9 +167,13 @@ export default function BuySection(props: {
 
     //** Uncomment here to get the transaction */
     console.log("-----------------");
+
+    //** Approve USDC to be spent by the contract */
     let IsErrorOccured = false;
     let transaction: Moralis.ExecuteFunctionResult = null;
-    const approvedValueToSpend = "36000";
+    const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
+      .mul(BigNumber.from(ypredUSDT_price_PerToekn))
+      .toString();
     const sendOptions = {
       contractAddress: USDC_ContractAddress,
       functionName: "approve",
@@ -179,15 +228,60 @@ export default function BuySection(props: {
             functionName: "buyTokens",
             abi: YPredictPrivateSale_ABI,
             params: {
-              amount: "1",
+              amount: ypredAmountToBuy,
             },
           };
           let transaction: Moralis.ExecuteFunctionResult = null;
           let IsErrorOccured = false;
           await Moralis.executeFunction(sendOptions)
-            .then(res => {
+            .then(async res => {
               console.log("result of calling buyTokens: ", res);
               transaction = res;
+              //**  Note : now will tell the user to wait the transaction to be mined
+              props.stepsStatus.step_2.status = "waiting_transaction_Mining";
+              // ** Note : we will check now the allocated token for the user and see if the transaction is mined
+              // ** Note : it should be in Interval so we can check every 1 second if the transaction is mined
+
+              console.log("step 2 : transaction result : ", transaction);
+              //* create this interval when transaction is not null
+              if(transaction != null){
+                const AwaitTransactionMined_Interval = setInterval(async () => {
+                  const readOptions = {
+                    contractAddress: PrivateSaleVesting_Address,
+                    functionName: "getAllocatedTokens",
+                    abi: PrivateSaleVesting_ABI,
+                    params: {
+                      beneficiary: account,
+                    },
+                  };
+                  const message = await Moralis.executeFunction(readOptions);
+                  console.log("Interval, result of calling getAllocatedTokens: ", message.toString());
+                  const allocatedToken_before = ethers.utils.formatEther(userNumberOfTokens.toString());
+                  const allocatedToken_After = ethers.utils.formatEther(message.toString());
+                  const requestedNumberOfTokens = ethers.utils.formatEther(
+                    BigNumber.from(ypredAmountToBuy).mul(BigNumber.from("1000000000000000000")).toString()
+                  );
+  
+                  console.log("allocatedToken_before : ", allocatedToken_before);
+                  console.log("allocatedToken_After : ", allocatedToken_After);
+                  console.log("requestedNumberOfTokens : ", requestedNumberOfTokens);
+                  // ** checking if the transaction is mined that means checking if there is a change in the allocated token
+                  //**  check if the requested number of tokens is equal to allocated token before + allocated token after
+                  // if(parseFloat(allocatedToken_After)===parseFloat(requestedNumberOfTokens)){
+                  if (
+                    parseFloat(allocatedToken_before) + parseFloat(requestedNumberOfTokens) ===
+                    parseFloat(allocatedToken_After)
+                  ) {
+                    props.stepsStatus.step_2.status = "success";
+                    props.stepsStatus.step_3.status = "success";
+                    props.setStepsStatus({ ...props.stepsStatus });
+                    toast.success("Transaction mined successfully");
+                    clearInterval(AwaitTransactionMined_Interval);
+                  }
+                },3000);
+              }
+              
+
             })
             .catch(error => {
               console.log("error Occured while calling approve: ", error);
