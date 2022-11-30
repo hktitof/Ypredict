@@ -76,8 +76,9 @@ export default function BuySection(props: {
     // }
   };
 
-  // ** this will get YPRED Price in BigNumber, and only when user connected to the wallet
+  // ** this will get YPRED Price & number of token user has in BigNumber, and only when user connected to the wallet
   // ** and ypredUSDT_price_PerToekn is not null, so it will only run once when user connected to the wallet
+  // ** same thing with userNUmberOfTokens
   useEffect(() => {
     if (account && ypredUSDT_price_PerToekn === null) {
       const getYPRED_Price_Per_tokene = async () => {
@@ -91,7 +92,18 @@ export default function BuySection(props: {
           // },
         };
         const message = await Moralis.executeFunction(readOptions);
-        setYpredUSDT_price_PerToekn(message.toString());
+        setYpredUSDT_price_PerToekn(message.toString()); // set YPRED Price in BigNumber
+        // let's get how many tokens allocated for the user
+        const readOptions2 = {
+          contractAddress: PrivateSaleVesting_Address,
+          functionName: "getAllocatedTokens",
+          abi: PrivateSaleVesting_ABI,
+          params: {
+            beneficiary: account,
+          },
+        };
+        const message2 = await Moralis.executeFunction(readOptions2);
+        setUserNumberOfTokens(BigNumber.from(message2.toString()));
       };
       getYPRED_Price_Per_tokene();
     }
@@ -178,7 +190,7 @@ export default function BuySection(props: {
     console.log("User Allocated Tokens : ", ethers.utils.formatEther(userNumberOfTokens.toString()));
   }
 
-  // this will execture when Is_Step_1_transaction_moining is changed to true
+  //** */ this will execture when Is_Step_1_transaction_moining is changed to true
   useEffect(() => {
     if (is_Step_1_transaction_moining) {
       console.log("Step 1 waiting transaction to be mined is begining*********************************");
@@ -275,6 +287,10 @@ export default function BuySection(props: {
                   props.stepsStatus.step_2.status = "success";
                   props.stepsStatus.step_3.status = "success";
                   props.setStepsStatus({ ...props.stepsStatus });
+                  setYpredAmountToBuy("0");// reset the amount to buy
+                  setTokenAmount_By_USDT("0");// state for display next to input, reset the amount to buy
+                  inputRef.current.value = "0";// reset the input value
+                  setUserNumberOfTokens(BigNumber.from(allocatedToken_After.split(".")[0]).mul(BigNumber.from("1000000000000000000")));
                   toast.success("Transaction is Confirmed");
                   console.log("**************** this is the token after **********", allocatedToken_After);
                   setUserNumberOfTokens(BigNumber.from(message)); // set user new number of tokens, from the result of allocatedTokens
@@ -459,18 +475,18 @@ export default function BuySection(props: {
   };
   const handleInputChange = event => {
     const re = /^[0-9\b]+$/;
-    if (event.target.value === "" || re.test(event.target.value)) {
+    if (event.target.value === "") {
+      inputRef.current.value = "0";
+    } else if (re.test(event.target.value)) {
       setInputState(event.target.value);
       const NumberOfToken_from_USDT = BigNumber.from(
         BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
       ).div(BigNumber.from("36000"));
       setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString());
+      setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
     } else {
       inputRef.current.value = inputState;
     }
-    // if (parseInt(event.target.value) < 0) {
-    //   inputRef.current.value = "0";
-    // }
   };
   const convertPriceTokenBigNumberToUSDT_Tofixed_3 = priceBigNumberToString => {
     const priceTokenFloat = parseFloat(priceBigNumberToString);
@@ -478,6 +494,9 @@ export default function BuySection(props: {
     const tokenPrice = (priceTokenFloat / priceUSDTFloat).toFixed(3);
     return tokenPrice.toString();
   };
+  const convertYPREDAllocatedTokentoNumber=()=>{
+    return(BigNumber.from(userNumberOfTokens).div(BigNumber.from("1000000000000000000")).toString())
+  }
   console.log("Input value : ", inputState);
   console.log("Token To buy, by typed USDT value : ", tokenAmount_By_USDT);
 
@@ -514,17 +533,16 @@ export default function BuySection(props: {
           </div>
         </div>
         <div className="row flex justify-center text-center items-center" style={{ marginTop: " 20px" }}>
-          <div className="col-8  ">
+          <div className="col-8">
             <input
               ref={inputRef}
               onChange={handleInputChange}
-              defaultValue={0}
+              // defaultValue={0}
               type="number"
-              className="input-buy border-4 text-center"
+              className="input-buy border-4 text-center placeholder-gray-500"
               placeholder="please input amount of USDT"
             />
-            <span className="ml-4 font-semibold">USDT</span>
-            
+            {/* <span className=" font-semibold">USDT</span> */}
           </div>
           {/* <input type="number" className="border-4 border-rose-800" placeholder="please input amount of USDT"/> */}
           <div className="col-4 text-start ">
@@ -536,8 +554,15 @@ export default function BuySection(props: {
           </div>
         </div>
         <div className="w-full row text-center" style={{ marginTop: " 20px" }}>
+          <div className="py-2">
+            <span className="text-sm font-medium">
+              You own{" "}
+              {userNumberOfTokens ? convertYPREDAllocatedTokentoNumber() : "0"}
+              {" "}YPRED
+            </span>
+          </div>
           <div className="w-full flex flex-row justify-center space-x-2">
-            <button className="btn-grad-1 flex ">
+            <button onClick={async ()=>clickTestButton()} className="btn-grad-1 flex ">
               <i className="fi fi-sr-wallet"></i> Buy with Metamask
             </button>
 
