@@ -1,1 +1,5 @@
-export const whitelist=["0xCf2b38A21d528B3F498Fbc7B1078a33DEAa5e5Ef"]
+
+/**
+ * @Attention : all addresses in this file should be in lowercase!!!!!!!!!
+ */
+export const whitelist=["0xcf2b38a21d528b3f498fbc7b1078a33deaa5e5ef"]

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useInsertionEffect } from "react";
 import { useMoralis, useChain, useWeb3ExecuteFunction, MoralisProvider } from "react-moralis";
 import { useEffect } from "react";
 import Lock from "./icon/Lock";
@@ -11,6 +11,7 @@ import { whitelist } from "../../config/whitelist/whitelist";
 
 import { error } from "console";
 import Moralis from "moralis-v1/types";
+
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
@@ -58,11 +59,14 @@ export default function BuySection(props: {
   const [detectedAccount, setDetectedAccount] = React.useState<string | null>(null);
   const [walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
   const testButton_Ref = React.useRef<HTMLButtonElement>(null);
-  const [userNumberOfTokens, setUserNumberOfTokens] = React.useState(null); // this will the number of tokens allocated to the user from the contract PrivateSaleVesting
+  const [userNumberOfTokens, setUserNumberOfTokens] = React.useState<BigNumber | null>(null); // this will be BigNumber
   const [ypredAmountToBuy, setYpredAmountToBuy] = React.useState("2"); // this will be the amount of YPredict token to buy
-  const [ypredUSDT_price_PerToekn, setYpredUSDT_price_PerToekn] = React.useState("36000"); // this will be the price of YPredict token in USDT
+  const [ypredUSDT_price_PerToekn, setYpredUSDT_price_PerToekn] = React.useState(null); // this will be the price of YPredict token in USDT
   const [is_Step_1_transaction_moining, setIs_Step_1_transaction_moining] = React.useState(false);
   const [Is_step_2_begin, setIs_step_2_begin] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [inputState, setInputState] = React.useState<string>("0");
+  const [tokenAmount_By_USDT, setTokenAmount_By_USDT] = React.useState<string>("0");
 
   const connectButton = async () => {
     props.setShowModal(true);
@@ -71,6 +75,27 @@ export default function BuySection(props: {
     //   window.localStorage.setItem("connected", "true");
     // }
   };
+
+  // ** this will get YPRED Price in BigNumber, and only when user connected to the wallet
+  // ** and ypredUSDT_price_PerToekn is not null, so it will only run once when user connected to the wallet
+  useEffect(() => {
+    if (account && ypredUSDT_price_PerToekn === null) {
+      const getYPRED_Price_Per_tokene = async () => {
+        const readOptions = {
+          contractAddress: YPredictPrivateSale_address,
+          functionName: "s_usdtPrice",
+          abi: YPredictPrivateSale_ABI,
+          // params: {
+          //   owner: account,
+          //   spender: YPredictPrivateSale_address,
+          // },
+        };
+        const message = await Moralis.executeFunction(readOptions);
+        setYpredUSDT_price_PerToekn(message.toString());
+      };
+      getYPRED_Price_Per_tokene();
+    }
+  }, [Moralis, account, ypredUSDT_price_PerToekn]);
 
   // ** NOTE : useEffect : automaticaly run on load, then, it'll run checking the value again
   // ** check if wallet is connected
@@ -123,6 +148,9 @@ export default function BuySection(props: {
   useEffect(() => {
     if (isWeb3Enabled) {
       toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
+      if (!whitelist.includes(account.toLocaleLowerCase())) {
+        toast.error("You are not whitelisted, request Whitelist from the team");
+      }
     }
   }, [isWeb3Enabled]);
   // ** Notify user if the wallet is disconnected
@@ -135,11 +163,14 @@ export default function BuySection(props: {
 
   // ** Notify Account is changed
   useEffect(() => {
-    if (newAccount && newAccount != detectedAccount) {
+    if (account && newAccount && newAccount != detectedAccount) {
       toast.success(`Account changed ${account.slice(0, 6)}...${account.slice(account.length - 4)}`);
+      if (!whitelist.includes(account.toLocaleLowerCase())) {
+        toast.error("You are not whitelisted, request Whitelist from the team");
+      }
       setDetectedAccount(newAccount);
     }
-  }, [newAccount, detectedAccount]);
+  }, [newAccount, detectedAccount, account]);
 
   //** Display values when com is re-rendered
   console.log("Account list : ", account);
@@ -147,60 +178,6 @@ export default function BuySection(props: {
     console.log("User Allocated Tokens : ", ethers.utils.formatEther(userNumberOfTokens.toString()));
   }
 
-  const clickTestButton_Action = async () => {
-    props.stepsStatus.step_1.status = "waiting_approve";
-    props.setShowBuyTokenModal(true);
-  };
-
-  const clickTestButton = () => {
-    console.log("Test Button Clicked!");
-    props.stepsStatus.step_1.status = "waiting_approve";
-    props.setStepsStatus(props.stepsStatus);
-    props.setShowBuyTokenModal(true);
-    const approveUSDC = async () => {
-      //** Uncomment here to get the transaction */
-      console.log("-----------------");
-
-      //** Approve USDC to be spent by the contract */
-      let IsErrorOccured = false;
-      let transaction: Moralis.ExecuteFunctionResult = null;
-      const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
-        .mul(BigNumber.from(ypredUSDT_price_PerToekn))
-        .toString();
-      const sendOptions = {
-        contractAddress: USDC_ContractAddress,
-        functionName: "approve",
-        abi: USDC_ABI,
-        params: {
-          spender: YPredictPrivateSale_address,
-          amount: approvedValueToSpend,
-        },
-      };
-
-      // ** TODO : continue here fix loading it should shows the time for waiting the approval
-      await Moralis.executeFunction(sendOptions)
-        .then(res => {
-          console.log("result of calling approve: ", res);
-          transaction = res;
-        })
-        .catch(error => {
-          console.log("error Occured while calling approve: ", error);
-          IsErrorOccured = true;
-          toast.error("Error in Approving USDT transaction");
-          props.stepsStatus.step_1.status = "error";
-          props.setStepsStatus({ ...props.stepsStatus });
-        });
-
-      if (!IsErrorOccured || transaction != null) {
-        props.stepsStatus.step_1.status = "waiting_transaction_Mining";
-        props.setStepsStatus({ ...props.stepsStatus });
-        setIs_Step_1_transaction_moining(true);
-      }
-    };
-    approveUSDC();
-
-    console.log("Clicked on Test Button action finished!");
-  };
   // this will execture when Is_Step_1_transaction_moining is changed to true
   useEffect(() => {
     if (is_Step_1_transaction_moining) {
@@ -299,7 +276,8 @@ export default function BuySection(props: {
                   props.stepsStatus.step_3.status = "success";
                   props.setStepsStatus({ ...props.stepsStatus });
                   toast.success("Transaction is Confirmed");
-                  setUserNumberOfTokens(allocatedToken_After.split(".")[0]); // set user new number of tokens
+                  console.log("**************** this is the token after **********", allocatedToken_After);
+                  setUserNumberOfTokens(BigNumber.from(message)); // set user new number of tokens, from the result of allocatedTokens
                   setIs_step_2_begin(false); // return false to the state step 2
                   clearInterval(AwaitTransactionMined_Interval);
                 }
@@ -316,39 +294,74 @@ export default function BuySection(props: {
           });
       };
       // ** this is where we call step2 because it's an async function
+      // ** next try catch is used to handle an error it doesn't appear always but sometimes it appears
       step2();
     }
   }, [Is_step_2_begin, Moralis, account, props, userNumberOfTokens, ypredAmountToBuy]);
 
   console.log("ButSection is re-rendered!!!!!");
 
-  const IsAllowListed_And_Connected = userAddress => {
-    // ** if it's not allowlisted, it will return true, then it will return following jsx
-    if (whitelist.includes(userAddress)) {
-      return (
-        <div className="row align-items-center bg-green-50 mt-4 flex justify-center items-center p-3">
-          <div className="col-md-12 ">
-            <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
-              <span className="text-green-700">You&apos;re not allowlisted for private sale</span>
-              <button className="btn bg-green-700 text-white text-md" style={{ fontSize: "12px" }} type="button">
-                <i className="fi fi-rr-edit"></i> Request Whitelist
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    }
+  // TODO : fix a user if not in whitelist it should not be able to buy tokens, and show to him that he is not in whitelist
+
+  const clickTestButton_Action = async () => {
+    props.stepsStatus.step_1.status = "waiting_approve";
+    props.setShowBuyTokenModal(true);
   };
-  const IsConnected_ = userAddress => {}
 
-  return (
-    <>
-      {/* Your are not Whitelisted */}
-     {account ? IsAllowListed_And_Connected(account):<></>}
-      <div className="relative">
-        {/* Connect Wallet Section */}
+  const clickTestButton = () => {
+    console.log("Test Button Clicked!");
+    props.stepsStatus.step_1.status = "waiting_approve";
+    props.setStepsStatus(props.stepsStatus);
+    props.setShowBuyTokenModal(true);
+    const approveUSDC = async () => {
+      //** Uncomment here to get the transaction */
+      console.log("-----------------");
 
-        <div className="absolute w-full h-full bg-white opacity-70 flex justify-center items-center"></div>
+      //** Approve USDC to be spent by the contract */
+      let IsErrorOccured = false;
+      let transaction: Moralis.ExecuteFunctionResult = null;
+      const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
+        .mul(BigNumber.from(ypredUSDT_price_PerToekn))
+        .toString();
+      const sendOptions = {
+        contractAddress: USDC_ContractAddress,
+        functionName: "approve",
+        abi: USDC_ABI,
+        params: {
+          spender: YPredictPrivateSale_address,
+          amount: approvedValueToSpend,
+        },
+      };
+
+      // ** TODO : continue here fix loading it should shows the time for waiting the approval
+      await Moralis.executeFunction(sendOptions)
+        .then(res => {
+          console.log("result of calling approve: ", res);
+          transaction = res;
+        })
+        .catch(error => {
+          console.log("error Occured while calling approve: ", error);
+          IsErrorOccured = true;
+          toast.error("Error in Approving USDT transaction");
+          props.stepsStatus.step_1.status = "error";
+          props.setStepsStatus({ ...props.stepsStatus });
+        });
+
+      if (!IsErrorOccured || transaction != null) {
+        props.stepsStatus.step_1.status = "waiting_transaction_Mining";
+        props.setStepsStatus({ ...props.stepsStatus });
+        setIs_Step_1_transaction_moining(true);
+      }
+    };
+    approveUSDC();
+
+    console.log("Clicked on Test Button action finished!");
+  };
+
+  const ISNotConnected = () => {
+    return (
+      <>
+        <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center"></div>
         <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
           <div className="flex flex-col space-y-4 items-center justify-center ">
             <Lock />
@@ -358,7 +371,8 @@ export default function BuySection(props: {
               className="btn-grad-1 px-4"
             >
               <i className="fi fi-sr-wallet"></i> Connect Wallet
-            </button>{" "}
+            </button>
+
             {/* <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
             Click
             </button>
@@ -383,11 +397,106 @@ export default function BuySection(props: {
               </div> */}
           </div>
         </div>
+      </>
+    );
+  };
 
+  const IsNot_In_whitelist = () => {
+    return (
+      <>
+        <div className="row align-items-center bg-green-50 mt-4 flex justify-center items-center p-3">
+          <div className="col-md-12 ">
+            <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
+              <span className="text-green-700">You&apos;re not allowlisted for private sale</span>
+              <button
+                className="px-3  py-2 rounded bg-green-700 text-white text-md"
+                style={{ fontSize: "12px" }}
+                type="button"
+              >
+                <i className="fi fi-rr-edit"></i> Request Whitelist
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center"></div>
+        <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
+          <div className="flex flex-col space-y-4 items-center justify-center ">
+            <Lock />
+            <button
+              onClick={async () => await connectButton()}
+              disabled={isWeb3EnableLoading}
+              className="btn-grad-1 px-4"
+            >
+              <i className="fi fi-sr-wallet"></i> Connect Wallet
+            </button>
+
+            {/* <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
+          Click
+          </button>
+          <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
+          <span className="">Development Testing</span>
+          <span className="">-------------------</span>
+          <span className="">
+          connected status :{" "}
+          {account ? (
+            <div className="flex flex-col spacey-y-2">
+            <span className="text-green-400">
+            {account.slice(0, 6)}...{account.slice(account.length - 4)}
+            </span>
+            <span className="">
+            Chain : <span className="text-green-400">{parseInt(chain.chainId)}</span>{" "}
+            </span>
+            </div>
+            ) : (
+              <span className="text-red-400">Not Connected</span>
+              )}
+              </span>
+            </div> */}
+          </div>
+        </div>
+      </>
+    );
+  };
+  const handleInputChange = event => {
+    const re = /^[0-9\b]+$/;
+    if (event.target.value === "" || re.test(event.target.value)) {
+      setInputState(event.target.value);
+      const NumberOfToken_from_USDT = BigNumber.from(
+        BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
+      ).div(BigNumber.from("36000"));
+      setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString());
+    } else {
+      inputRef.current.value = inputState;
+    }
+    // if (parseInt(event.target.value) < 0) {
+    //   inputRef.current.value = "0";
+    // }
+  };
+  const convertPriceTokenBigNumberToUSDT_Tofixed_3 = priceBigNumberToString => {
+    const priceTokenFloat = parseFloat(priceBigNumberToString);
+    const priceUSDTFloat = parseFloat("1000000");
+    const tokenPrice = (priceTokenFloat / priceUSDTFloat).toFixed(3);
+    return tokenPrice.toString();
+  };
+  console.log("Input value : ", inputState);
+  console.log("Token To buy, by typed USDT value : ", tokenAmount_By_USDT);
+
+  return (
+    <>
+      {/* Your are not Whitelisted */}
+
+      <div className="relative">
+        {/* Connect Wallet Section */}
+        {account ? whitelist.includes(account.toLowerCase()) ? <></> : <IsNot_In_whitelist /> : <ISNotConnected />}
         <div className="row" style={{ marginTop: " 20px" }}>
           <div className=" col-6 text-center">
             <p className="text-dark2 text-box-sub-title"> Private Sale Price</p>
-            <p className="text-box-content"> $0.036</p>
+            <p className="text-box-content">
+              {"$"}
+              {ypredUSDT_price_PerToekn
+                ? convertPriceTokenBigNumberToUSDT_Tofixed_3(ypredUSDT_price_PerToekn)
+                : "0.036"}
+            </p>
           </div>
           <div className=" col-6 text-center">
             <p className="text-dark2 text-box-sub-title "> Private Sale Goal</p>
@@ -404,16 +513,25 @@ export default function BuySection(props: {
             <p className="text-box-content">25%</p>
           </div>
         </div>
-        <div className="row text-center items-center" style={{ marginTop: " 20px" }}>
-          <div className="col-8">
-            <input type="number" className="input-buy border-4 text-center" placeholder="please input amount of USDT" />
+        <div className="row flex justify-center text-center items-center" style={{ marginTop: " 20px" }}>
+          <div className="col-8  ">
+            <input
+              ref={inputRef}
+              onChange={handleInputChange}
+              defaultValue={0}
+              type="number"
+              className="input-buy border-4 text-center"
+              placeholder="please input amount of USDT"
+            />
+            <span className="ml-4 font-semibold">USDT</span>
+            
           </div>
           {/* <input type="number" className="border-4 border-rose-800" placeholder="please input amount of USDT"/> */}
           <div className="col-4 text-start ">
             <div className="flex flex-row space-x-2 items-center fw-semibold">
               =
               <img src="/ypred-coin.png" alt="" style={{ width: " 30px", marginLeft: " 10px" }} />
-              <span id="ypred-amount">0</span>
+              <span id="ypred-amount">{tokenAmount_By_USDT}</span>
             </div>
           </div>
         </div>

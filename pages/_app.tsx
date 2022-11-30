@@ -1,11 +1,13 @@
-import '../styles/globals.css'
-import 'tailwindcss/tailwind.css'
-import "./app.css"
+import "../styles/globals.css";
+import "tailwindcss/tailwind.css";
+import "./app.css";
 
-import { MoralisProvider } from "react-moralis";
+
+import { MoralisProvider,  } from "react-moralis";
 
 
 function MyApp({ Component, pageProps }) {
+
   return (
     <MoralisProvider initializeOnMount={false}>
       <Component {...pageProps} />
@@ -13,4 +15,4 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
-export default MyApp
+export default MyApp;
