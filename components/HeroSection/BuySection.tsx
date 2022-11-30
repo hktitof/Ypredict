@@ -53,7 +53,7 @@ export default function BuySection(props: {
   stepsStatus;
   setStepsStatus;
 }) {
-  const { enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
+  const { web3, enableWeb3, account, isWeb3Enabled, Moralis, deactivateWeb3, isWeb3EnableLoading } = useMoralis();
   const { chain } = useChain();
   const [newAccount, setNewAccount] = React.useState<string | null>(null);
   const [detectedAccount, setDetectedAccount] = React.useState<string | null>(null);
@@ -61,12 +61,16 @@ export default function BuySection(props: {
   const testButton_Ref = React.useRef<HTMLButtonElement>(null);
   const [userNumberOfTokens, setUserNumberOfTokens] = React.useState<BigNumber | null>(null); // this will be BigNumber
   const [ypredAmountToBuy, setYpredAmountToBuy] = React.useState("2"); // this will be the amount of YPredict token to buy
-  const [ypredUSDT_price_PerToekn, setYpredUSDT_price_PerToekn] = React.useState(null); // this will be the price of YPredict token in USDT
+  const [ypresUSDT_price_PerToekn, setYpredUSDT_price_PerToekn] = React.useState(null); // this will be the price of YPredict token in USDT
   const [is_Step_1_transaction_moining, setIs_Step_1_transaction_moining] = React.useState(false);
   const [Is_step_2_begin, setIs_step_2_begin] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [inputState, setInputState] = React.useState<string>("0");
   const [tokenAmount_By_USDT, setTokenAmount_By_USDT] = React.useState<string>("0");
+  const [minAmountToInvest, setMinAmountToInvest] = React.useState<string>("0"); // this will be fetched from the contract
+  const [showMinimumMessage, setShowMinimumMessage] = React.useState<boolean>(false);
+  const [chainId, setChainID] = React.useState<number>(1); // Mumbai ChainId
+  const [ChainIdDev, setChainIdDev] = React.useState<number>(80001); // we testing in this chain
 
   const connectButton = async () => {
     props.setShowModal(true);
@@ -80,7 +84,8 @@ export default function BuySection(props: {
   // ** and ypredUSDT_price_PerToekn is not null, so it will only run once when user connected to the wallet
   // ** same thing with userNUmberOfTokens
   useEffect(() => {
-    if (account && ypredUSDT_price_PerToekn === null) {
+    if (account && ypresUSDT_price_PerToekn === null && chainId==ChainIdDev) {
+      console.log("Chain Id in useEffect : ", Moralis.chainId);
       const getYPRED_Price_Per_tokene = async () => {
         const readOptions = {
           contractAddress: YPredictPrivateSale_address,
@@ -93,7 +98,7 @@ export default function BuySection(props: {
         };
         const message = await Moralis.executeFunction(readOptions);
         setYpredUSDT_price_PerToekn(message.toString()); // set YPRED Price in BigNumber
-        // let's get how many tokens allocated for the user
+        //** */ let's get how many tokens allocated for the user
         const readOptions2 = {
           contractAddress: PrivateSaleVesting_Address,
           functionName: "getAllocatedTokens",
@@ -104,10 +109,25 @@ export default function BuySection(props: {
         };
         const message2 = await Moralis.executeFunction(readOptions2);
         setUserNumberOfTokens(BigNumber.from(message2.toString()));
+        //** let's get the minumum amount of USDT to Invest
+        const readOptions3 = {
+          contractAddress: YPredictPrivateSale_address,
+          functionName: "s_minAmountToInvest",
+          abi: YPredictPrivateSale_ABI,
+          // params: {
+          //   beneficiary: account,
+          // },
+        };
+        const message3 = await Moralis.executeFunction(readOptions3);
+        let minAmountToInvest = BigNumber.from(message3.toString()).div(BigNumber.from("1000000")).toString();
+        if (parseInt(minAmountToInvest) == 0) {
+          minAmountToInvest = (parseFloat(message3.toString()) / parseFloat("1000000")).toFixed(3);
+        }
+        setMinAmountToInvest(minAmountToInvest);
       };
       getYPRED_Price_Per_tokene();
     }
-  }, [Moralis, account, ypredUSDT_price_PerToekn]);
+  }, [ChainIdDev, Moralis, account, chainId, ypresUSDT_price_PerToekn]);
 
   // ** NOTE : useEffect : automaticaly run on load, then, it'll run checking the value again
   // ** check if wallet is connected
@@ -126,7 +146,7 @@ export default function BuySection(props: {
     // }
   }, [account, enableWeb3, isWeb3Enabled]);
 
-  // check on Account Changing
+  // ** check on Account Changing
   useEffect(() => {
     Moralis.onAccountChanged(account => {
       console.log("Account changed to ", { account });
@@ -143,7 +163,7 @@ export default function BuySection(props: {
   // ** this will get user allocated tokens from the contract PrivateSaleVesting, and assign it to the state userNumberOfTokens
   // ** NOTE : useEffect : automaticaly run on load, then, it'll run checking the value again
   useEffect(() => {
-    if (isWeb3Enabled && account) {
+    if (isWeb3Enabled && account && chainId==ChainIdDev) {
       console.log("useEffect() is executed..... getting user allocated tokens");
       // ** Todo : continue grap how much token the user has, so you can use it later
       //**  to check if a user has succefully bough new token and the transaction is mined
@@ -155,16 +175,38 @@ export default function BuySection(props: {
         Moralis
       );
     }
-  }, [Moralis, account, isWeb3Enabled]);
-  // ** Notify user wallet is connected
+  }, [ChainIdDev, Moralis, account, chainId, isWeb3Enabled]);
+
+  // ** Notify user wallet is connected only when user ONLY!! using the network provided
   useEffect(() => {
     if (isWeb3Enabled) {
-      toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
-      if (!whitelist.includes(account.toLocaleLowerCase())) {
-        toast.error("You are not whitelisted, request Whitelist from the team");
+      if (!(chainId == ChainIdDev)) {
+        const switchNetwork = async () => {
+          try {
+            await Moralis.switchNetwork(ChainIdDev);
+          } catch (error) {
+            toast.error("Please switch to Polygon network");
+            alert(error.message);
+          }
+        };
+        switchNetwork();
+      } else {
+        toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
+        if (!whitelist.includes(account.toLocaleLowerCase())) {
+          toast.error("You are not whitelisted, request Whitelist from the team");
+        }
       }
     }
   }, [isWeb3Enabled]);
+
+  // ** 
+  useEffect(()=>{
+    if(account){
+
+      console.log("useEffect, Changing chainId to : ", chainId);
+      setChainID(parseInt(Moralis.chainId))
+    }
+  },[Moralis.chainId, account, chainId])
   // ** Notify user if the wallet is disconnected
   useEffect(() => {
     if (walletIsDisconnected) {
@@ -208,7 +250,7 @@ export default function BuySection(props: {
         const message = await Moralis.executeFunction(readOptions);
         // TODO : continue here, you need to fix MaxListern\ExceedeWarnings by copying code from here, and put it in another interval
         const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
-          .mul(BigNumber.from(ypredUSDT_price_PerToekn))
+          .mul(BigNumber.from(ypresUSDT_price_PerToekn))
           .toString();
         if (message.toString() === approvedValueToSpend.toString()) {
           props.stepsStatus.step_1.status = "success";
@@ -221,7 +263,7 @@ export default function BuySection(props: {
         }
       }, 1000);
     }
-  }, [Moralis, account, is_Step_1_transaction_moining, props, ypredAmountToBuy, ypredUSDT_price_PerToekn]);
+  }, [Moralis, account, is_Step_1_transaction_moining, props, ypredAmountToBuy, ypresUSDT_price_PerToekn]);
   // ** this will execture when is_step_2_begin is changed to true, that means step 1 is done, and step 2 is begining
   useEffect(() => {
     if (Is_step_2_begin) {
@@ -287,10 +329,12 @@ export default function BuySection(props: {
                   props.stepsStatus.step_2.status = "success";
                   props.stepsStatus.step_3.status = "success";
                   props.setStepsStatus({ ...props.stepsStatus });
-                  setYpredAmountToBuy("0");// reset the amount to buy
-                  setTokenAmount_By_USDT("0");// state for display next to input, reset the amount to buy
-                  inputRef.current.value = "0";// reset the input value
-                  setUserNumberOfTokens(BigNumber.from(allocatedToken_After.split(".")[0]).mul(BigNumber.from("1000000000000000000")));
+                  setYpredAmountToBuy("0"); // reset the amount to buy
+                  setTokenAmount_By_USDT("0"); // state for display next to input, reset the amount to buy
+                  inputRef.current.value = "0"; // reset the input value
+                  setUserNumberOfTokens(
+                    BigNumber.from(allocatedToken_After.split(".")[0]).mul(BigNumber.from("1000000000000000000"))
+                  );
                   toast.success("Transaction is Confirmed");
                   console.log("**************** this is the token after **********", allocatedToken_After);
                   setUserNumberOfTokens(BigNumber.from(message)); // set user new number of tokens, from the result of allocatedTokens
@@ -337,7 +381,7 @@ export default function BuySection(props: {
       let IsErrorOccured = false;
       let transaction: Moralis.ExecuteFunctionResult = null;
       const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
-        .mul(BigNumber.from(ypredUSDT_price_PerToekn))
+        .mul(BigNumber.from(ypresUSDT_price_PerToekn))
         .toString();
       const sendOptions = {
         contractAddress: USDC_ContractAddress,
@@ -445,29 +489,6 @@ export default function BuySection(props: {
             >
               <i className="fi fi-sr-wallet"></i> Connect Wallet
             </button>
-
-            {/* <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
-          Click
-          </button>
-          <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
-          <span className="">Development Testing</span>
-          <span className="">-------------------</span>
-          <span className="">
-          connected status :{" "}
-          {account ? (
-            <div className="flex flex-col spacey-y-2">
-            <span className="text-green-400">
-            {account.slice(0, 6)}...{account.slice(account.length - 4)}
-            </span>
-            <span className="">
-            Chain : <span className="text-green-400">{parseInt(chain.chainId)}</span>{" "}
-            </span>
-            </div>
-            ) : (
-              <span className="text-red-400">Not Connected</span>
-              )}
-              </span>
-            </div> */}
           </div>
         </div>
       </>
@@ -476,17 +497,60 @@ export default function BuySection(props: {
   const handleInputChange = event => {
     const re = /^[0-9\b]+$/;
     if (event.target.value === "") {
-      inputRef.current.value = "0";
+      setShowMinimumMessage(false);
+      setInputState(parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest);
     } else if (re.test(event.target.value)) {
-      setInputState(event.target.value);
-      const NumberOfToken_from_USDT = BigNumber.from(
-        BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
-      ).div(BigNumber.from("36000"));
-      setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString());
-      setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
+      // if he enter a number
+      // if the number is less than min amount to invest
+      if (parseFloat(event.target.value) > parseFloat(minAmountToInvest)) {
+        setShowMinimumMessage(false); // hide the message of minimum amount
+        setInputState(event.target.value); // set the input state
+        const NumberOfToken_from_USDT = BigNumber.from(
+          BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
+        ).div(BigNumber.from("36000")); // calculate the number of token from USDT
+        setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
+        setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
+      } else {
+        setShowMinimumMessage(true); // show the message of minimum amount
+        let mintAmount = minAmountToInvest; // this will reserved to check if amount is minAmount less than 1
+        if (parseFloat(minAmountToInvest) < 1) mintAmount = "1";
+        inputRef.current.value = mintAmount;
+        setInputState(mintAmount); // set the input state
+        const NumberOfToken_from_USDT = BigNumber.from(BigNumber.from("1000000").mul(BigNumber.from(mintAmount))).div(
+          BigNumber.from("36000")
+        ); // calculate the number of token from USDT
+        setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
+        setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
+      }
     } else {
       inputRef.current.value = inputState;
     }
+  };
+  const IsNotConnectedToPolygon = () => {
+    return (
+      <>
+        <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center"></div>
+        <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
+          <div className="flex flex-col space-y-4 items-center justify-center ">
+            <Lock />
+            <button
+              onClick={async () => {
+                try {
+                  await Moralis.switchNetwork(80001);
+                } catch (error) {
+                  toast.error("Please switch to Polygon network");
+                  alert(error.message);
+                }
+              }}
+              disabled={isWeb3EnableLoading}
+              className="btn-grad-1 px-4"
+            >
+              <i className="fi fi-sr-wallet"></i> Switch Network 
+            </button>
+          </div>
+        </div>
+      </>
+    );
   };
   const convertPriceTokenBigNumberToUSDT_Tofixed_3 = priceBigNumberToString => {
     const priceTokenFloat = parseFloat(priceBigNumberToString);
@@ -494,26 +558,40 @@ export default function BuySection(props: {
     const tokenPrice = (priceTokenFloat / priceUSDTFloat).toFixed(3);
     return tokenPrice.toString();
   };
-  const convertYPREDAllocatedTokentoNumber=()=>{
-    return(BigNumber.from(userNumberOfTokens).div(BigNumber.from("1000000000000000000")).toString())
-  }
+  const convertYPREDAllocatedTokentoNumber = () => {
+    return BigNumber.from(userNumberOfTokens).div(BigNumber.from("1000000000000000000")).toString();
+  };
   console.log("Input value : ", inputState);
   console.log("Token To buy, by typed USDT value : ", tokenAmount_By_USDT);
 
+  // TODO : add PrivateSaleVesting TimeLeft
+ 
   return (
     <>
       {/* Your are not Whitelisted */}
 
       <div className="relative">
         {/* Connect Wallet Section */}
-        {account ? whitelist.includes(account.toLowerCase()) ? <></> : <IsNot_In_whitelist /> : <ISNotConnected />}
+        {account ? (
+          chainId === ChainIdDev ? (
+            whitelist.includes(account.toLowerCase()) ? (
+              <></>
+            ) : (
+              <IsNot_In_whitelist />
+            )
+          ) : (
+            <IsNotConnectedToPolygon />
+          )
+        ) : (
+          <ISNotConnected />
+        )}
         <div className="row" style={{ marginTop: " 20px" }}>
           <div className=" col-6 text-center">
             <p className="text-dark2 text-box-sub-title"> Private Sale Price</p>
             <p className="text-box-content">
               {"$"}
-              {ypredUSDT_price_PerToekn
-                ? convertPriceTokenBigNumberToUSDT_Tofixed_3(ypredUSDT_price_PerToekn)
+              {ypresUSDT_price_PerToekn
+                ? convertPriceTokenBigNumberToUSDT_Tofixed_3(ypresUSDT_price_PerToekn)
                 : "0.036"}
             </p>
           </div>
@@ -532,37 +610,52 @@ export default function BuySection(props: {
             <p className="text-box-content">25%</p>
           </div>
         </div>
-        <div className="row flex justify-center text-center items-center" style={{ marginTop: " 20px" }}>
-          <div className="col-8">
-            <input
-              ref={inputRef}
-              onChange={handleInputChange}
-              // defaultValue={0}
-              type="number"
-              className="input-buy border-4 text-center placeholder-gray-500"
-              placeholder="please input amount of USDT"
-            />
-            {/* <span className=" font-semibold">USDT</span> */}
-          </div>
-          {/* <input type="number" className="border-4 border-rose-800" placeholder="please input amount of USDT"/> */}
-          <div className="col-4 text-start ">
-            <div className="flex flex-row space-x-2 items-center fw-semibold">
-              =
-              <img src="/ypred-coin.png" alt="" style={{ width: " 30px", marginLeft: " 10px" }} />
-              <span id="ypred-amount">{tokenAmount_By_USDT}</span>
+
+        <div className="w-full flex flex-row space-x-4 justify-center mt-4 mb-4">
+          <div className="flex items-center space-x-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-7 w-7 ">
+              <polygon fill="#4db6ac" points="24,44 2,22.5 10,5 38,5 46,22.5" />
+              <path
+                fill="#fff"
+                d="M38,22c0-1.436-4.711-2.635-11-2.929V16h8v-6H13v6h8v3.071C14.711,19.365,10,20.564,10,22	s4.711,2.635,11,2.929V36h6V24.929C33.289,24.635,38,23.436,38,22z M24,24c-6.627,0-12-1.007-12-2.25c0-1.048,3.827-1.926,9-2.176	v3.346c0.96,0.06,1.96,0.08,3,0.08s2.04-0.02,3-0.08v-3.346c5.173,0.25,9,1.128,9,2.176C36,22.993,30.627,24,24,24z"
+              />
+            </svg>
+            <div className="flex flex-col font-normal">
+              <input
+                ref={inputRef}
+                onChange={handleInputChange}
+                // defaultValue={0}
+                type="number"
+                className="border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
+                placeholder="please input amount of USDT"
+              />
+              {showMinimumMessage ? (
+                <span className="text-xs">
+                  Minimum is {parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest}
+                </span>
+              ) : (
+                <></>
+              )}
             </div>
+          </div>
+
+          <div className="flex flex-row space-x-2 items-center fw-semibold">
+            =
+            <img src="/ypred-coin.png" alt="" style={{ width: " 30px", marginLeft: " 10px" }} />
+            <span id="ypred-amount">{tokenAmount_By_USDT}</span>
           </div>
         </div>
         <div className="w-full row text-center" style={{ marginTop: " 20px" }}>
           <div className="py-2">
             <span className="text-sm font-medium">
-              You own{" "}
-              {userNumberOfTokens ? convertYPREDAllocatedTokentoNumber() : "0"}
-              {" "}YPRED
+              You own {userNumberOfTokens ? convertYPREDAllocatedTokentoNumber() : "0"}{" "}
+              <span className="text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500">
+                YPRED
+              </span>
             </span>
           </div>
           <div className="w-full flex flex-row justify-center space-x-2">
-            <button onClick={async ()=>clickTestButton()} className="btn-grad-1 flex ">
+            <button onClick={async () => clickTestButton()} className="btn-grad-1 flex ">
               <i className="fi fi-sr-wallet"></i> Buy with Metamask
             </button>
 
