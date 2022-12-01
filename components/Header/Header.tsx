@@ -45,9 +45,9 @@ export default function Header() {
       </div>
 
       <div className="hamberguer-menu-section">
-        <a href="" className="hamberguer-menu-anchor">
+        <div  className="hamberguer-menu-anchor hover:cursor-pointer">
           <img src="img/bars-solid.svg" className="mobile-hamberuger" />
-        </a>
+        </div>
       </div>
     </div>
   );
