@@ -3,6 +3,59 @@ import BuySection from "./BuySection";
 import CardHeader from "./CardHeader";
 import PreSale from "./PreSale";
 import VideoSection from "./VideoSection";
+import { useEffect } from "react";
+import { ethers } from "ethers";
+import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
+import { timingSafeEqual } from "crypto";
+
+// get days, hours, minutes, seconds from timestamp
+const getTimeRemaining = timeRemaining => {
+  const total = timeRemaining;
+  const seconds = Math.floor((total / 1000) % 60);
+  const minutes = Math.floor((total / 1000 / 60) % 60);
+  const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(total / (1000 * 60 * 60 * 24));
+  return [days, hours, minutes, seconds];
+};
+// format span to show the time left
+const getFormatDateTime = seconds => {
+  const formatDateTime = time => {
+    time = Number(time);
+    const d = Math.floor(time / (3600 * 24));
+    const h = Math.floor((time % (3600 * 24)) / 3600);
+    const m = Math.floor((time % 3600) / 60);
+    const s = Math.floor(time % 60);
+
+    const dDisplay = d > 0 ? (d == 1 ? d + "day " : d + " days ") : "";
+    const hDisplay = h > 9 ? h+":": "0"+h+":";
+    const mDisplay = m > 9 ? m+":": "0"+m+":";
+    const sDisplay = s > 9 ? s: "0"+s;
+    return dDisplay + hDisplay + mDisplay + sDisplay;
+  };
+  return formatDateTime(seconds);
+};
+const CountDown = (props: { timeRemaining }) => {
+  const [days, hours, minutes, seconds] = getTimeRemaining(props.timeRemaining);
+  const timeSpanRef = React.useRef<HTMLSpanElement>(null);
+  const timeCounter = useEffect(() => {
+    let counter = Number(props.timeRemaining);
+    const timer = setInterval(() => {
+      if (timeSpanRef.current) {
+        counter--;
+        timeSpanRef.current.innerHTML = getFormatDateTime(counter);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [props.timeRemaining]);
+  return (
+    <span
+      ref={timeSpanRef}
+      className="font-semibold text-3xl sm:text-4xl text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500"
+    >
+      test
+    </span>
+  );
+};
 /* eslint-disable @next/next/no-img-element */
 export default function HeroSection(props: {
   showModal;
@@ -12,6 +65,23 @@ export default function HeroSection(props: {
   stepsStatus;
   setStepsStatus;
 }) {
+  const [timeRemaining, setTimeRemaining] = React.useState<number>(null);
+  useEffect(() => {
+    const getBlockTime = async () => {
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
+      const currentBlock = await provider.getBlockNumber();
+      const blockTimestamp = (await provider.getBlock(currentBlock)).timestamp; // this is in seconds
+      console.log("Block time stamp : ", blockTimestamp);
+      // now let's get the endDate from the contract
+      const contract = new ethers.Contract(PrivateSaleVesting_Address, PrivateSaleVesting_ABI, provider);
+      const endDate_sec = (await contract.endDate()).toString(); // call endDate() function of the contract
+      console.log("End date in seconds : ", endDate_sec);
+      const timeRemaining = endDate_sec - blockTimestamp;
+      setTimeRemaining(timeRemaining);
+    };
+    getBlockTime();
+  }, []);
+
   return (
     <div className="hero-section">
       {/* Title */}
@@ -22,7 +92,7 @@ export default function HeroSection(props: {
       <br></br>
       <div className="container lg:px-32">
         <div className="row" style={{ marginTop: "0px" }}>
-          <VideoSection/>
+          <VideoSection />
           <div className="col-md-6">
             <div className="card custom-card-buy">
               <CardHeader />
@@ -110,7 +180,7 @@ export default function HeroSection(props: {
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Working Section for Private Sale to Wallet...etc */}
                     <BuySection
                       stepsStatus={props.stepsStatus}
@@ -128,6 +198,13 @@ export default function HeroSection(props: {
                       <div className="col-md-12 text-center" style={{ marginBottom: " 20px" }}>
                         <span className="fw-semibold text-grad1" style={{ fontSize: " 40px" }} id="clock"></span>
                       </div>
+                    </div>
+                    <div className="w-full flex justify-center items-center pb-8">
+                      {/* <span className="font-semibold text-4xl text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500">
+                        {" "}
+                        12 days
+                      </span> */}
+                      <CountDown timeRemaining={timeRemaining} />
                     </div>
                   </div>
 

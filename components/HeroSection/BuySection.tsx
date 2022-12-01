@@ -84,7 +84,7 @@ export default function BuySection(props: {
   // ** and ypredUSDT_price_PerToekn is not null, so it will only run once when user connected to the wallet
   // ** same thing with userNUmberOfTokens
   useEffect(() => {
-    if (account && ypresUSDT_price_PerToekn === null && chainId==ChainIdDev) {
+    if (account && ypresUSDT_price_PerToekn === null && chainId == ChainIdDev) {
       console.log("Chain Id in useEffect : ", Moralis.chainId);
       const getYPRED_Price_Per_tokene = async () => {
         const readOptions = {
@@ -163,7 +163,7 @@ export default function BuySection(props: {
   // ** this will get user allocated tokens from the contract PrivateSaleVesting, and assign it to the state userNumberOfTokens
   // ** NOTE : useEffect : automaticaly run on load, then, it'll run checking the value again
   useEffect(() => {
-    if (isWeb3Enabled && account && chainId==ChainIdDev) {
+    if (isWeb3Enabled && account && chainId == ChainIdDev) {
       console.log("useEffect() is executed..... getting user allocated tokens");
       // ** Todo : continue grap how much token the user has, so you can use it later
       //**  to check if a user has succefully bough new token and the transaction is mined
@@ -194,19 +194,20 @@ export default function BuySection(props: {
         toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
         if (!whitelist.includes(account.toLocaleLowerCase())) {
           toast.error("You are not whitelisted, request Whitelist from the team");
+        }else{
+          toast.success("You are whitelisted");
         }
       }
     }
   }, [isWeb3Enabled]);
 
-  // ** 
-  useEffect(()=>{
-    if(account){
-
+  // **
+  useEffect(() => {
+    if (account) {
       console.log("useEffect, Changing chainId to : ", chainId);
-      setChainID(parseInt(Moralis.chainId))
+      setChainID(parseInt(Moralis.chainId));
     }
-  },[Moralis.chainId, account, chainId])
+  }, [Moralis.chainId, account, chainId]);
   // ** Notify user if the wallet is disconnected
   useEffect(() => {
     if (walletIsDisconnected) {
@@ -331,7 +332,7 @@ export default function BuySection(props: {
                   props.setStepsStatus({ ...props.stepsStatus });
                   setYpredAmountToBuy("0"); // reset the amount to buy
                   setTokenAmount_By_USDT("0"); // state for display next to input, reset the amount to buy
-                  inputRef.current.value = "0"; // reset the input value
+                  inputRef.current.value =""// reset the input value
                   setUserNumberOfTokens(
                     BigNumber.from(allocatedToken_After.split(".")[0]).mul(BigNumber.from("1000000000000000000"))
                   );
@@ -545,11 +546,22 @@ export default function BuySection(props: {
               disabled={isWeb3EnableLoading}
               className="btn-grad-1 px-4"
             >
-              <i className="fi fi-sr-wallet"></i> Switch Network 
+              <i className="fi fi-sr-wallet"></i> Switch Network
             </button>
           </div>
         </div>
       </>
+    );
+  };
+  const IsWhiteListed = () => {
+    return (
+      <div className="row align-items-center bg-green-50 mt-4 flex justify-center items-center p-3">
+        <div className="col-md-12 ">
+          <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
+            <span className="text-green-700">You&apos;re allowlisted for private sale</span>
+          </div>
+        </div>
+      </div>
     );
   };
   const convertPriceTokenBigNumberToUSDT_Tofixed_3 = priceBigNumberToString => {
@@ -565,7 +577,7 @@ export default function BuySection(props: {
   console.log("Token To buy, by typed USDT value : ", tokenAmount_By_USDT);
 
   // TODO : add PrivateSaleVesting TimeLeft
- 
+
   return (
     <>
       {/* Your are not Whitelisted */}
@@ -575,7 +587,7 @@ export default function BuySection(props: {
         {account ? (
           chainId === ChainIdDev ? (
             whitelist.includes(account.toLowerCase()) ? (
-              <></>
+              <IsWhiteListed />
             ) : (
               <IsNot_In_whitelist />
             )
@@ -585,6 +597,7 @@ export default function BuySection(props: {
         ) : (
           <ISNotConnected />
         )}
+
         <div className="row" style={{ marginTop: " 20px" }}>
           <div className=" col-6 text-center">
             <p className="text-dark2 text-box-sub-title"> Private Sale Price</p>
