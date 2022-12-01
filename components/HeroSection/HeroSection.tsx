@@ -13,6 +13,7 @@ import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config
 const getFormatDateTime = seconds => {
   const formatDateTime = time => {
     time = Number(time);
+    if(time<1) return "Finished!"
     const d = Math.floor(time / (3600 * 24));
     const h = Math.floor((time % (3600 * 24)) / 3600);
     const m = Math.floor((time % 3600) / 60);
@@ -202,7 +203,7 @@ export default function HeroSection(props: {
                         {" "}
                         12 days
                       </span> */}
-                      <CountDown timeRemaining={timeRemaining} />
+                      {timeRemaining?<CountDown timeRemaining={timeRemaining} />:"..."}
                     </div>
                   </div>
 
