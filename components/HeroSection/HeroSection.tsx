@@ -6,17 +6,9 @@ import VideoSection from "./VideoSection";
 import { useEffect } from "react";
 import { ethers } from "ethers";
 import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
-import { timingSafeEqual } from "crypto";
 
-// get days, hours, minutes, seconds from timestamp
-const getTimeRemaining = timeRemaining => {
-  const total = timeRemaining;
-  const seconds = Math.floor((total / 1000) % 60);
-  const minutes = Math.floor((total / 1000 / 60) % 60);
-  const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
-  const days = Math.floor(total / (1000 * 60 * 60 * 24));
-  return [days, hours, minutes, seconds];
-};
+
+;
 // format span to show the time left
 const getFormatDateTime = seconds => {
   const formatDateTime = time => {
@@ -35,9 +27,9 @@ const getFormatDateTime = seconds => {
   return formatDateTime(seconds);
 };
 const CountDown = (props: { timeRemaining }) => {
-  const [days, hours, minutes, seconds] = getTimeRemaining(props.timeRemaining);
+
   const timeSpanRef = React.useRef<HTMLSpanElement>(null);
-  const timeCounter = useEffect(() => {
+  useEffect(() => {
     let counter = Number(props.timeRemaining);
     const timer = setInterval(() => {
       if (timeSpanRef.current) {
@@ -52,7 +44,8 @@ const CountDown = (props: { timeRemaining }) => {
       ref={timeSpanRef}
       className="font-semibold text-3xl sm:text-4xl text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500"
     >
-      test
+      {props.timeRemaining?getFormatDateTime(props.timeRemaining):"00:00:00"}
+      
     </span>
   );
 };
@@ -66,6 +59,9 @@ export default function HeroSection(props: {
   setStepsStatus;
 }) {
   const [timeRemaining, setTimeRemaining] = React.useState<number>(null);
+  const [vestingContractAlreadyInvested, setVestingContractAlreadyInvested] = React.useState<number>(72000);
+
+
   useEffect(() => {
     const getBlockTime = async () => {
       const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
@@ -80,6 +76,8 @@ export default function HeroSection(props: {
       setTimeRemaining(timeRemaining);
     };
     getBlockTime();
+
+   
   }, []);
 
   return (
@@ -169,14 +167,14 @@ export default function HeroSection(props: {
                         <span className="private-total text-success fw-semibold">$300,000</span>
                         <div className="progress">
                           {/* Progress Bar here */}
-                          {/* <div
+                          <div
                             className="progress-bar progress-bar-striped progress-bar-animated bg-success"
                             role="progressbar"
-                            style={{ width: "75%" }}
+                            style={{ width: "40%" }}
                             aria-valuenow="25"
                             aria-valuemin="0"
                             aria-valuemax="100"
-                          ></div> */}
+                          ></div>
                         </div>
                       </div>
                     </div>
