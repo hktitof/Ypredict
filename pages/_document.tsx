@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-sync-scripts */
+/* eslint-disable @next/next/no-css-tags */
 import { Html, Head, Main, NextScript } from "next/document";
 import HeadLink from "../components/Header/HeadLink";
 export default function Document() {

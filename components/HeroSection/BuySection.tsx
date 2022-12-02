@@ -179,7 +179,7 @@ export default function BuySection(props: {
 
   // ** Notify user wallet is connected only when user ONLY!! using the network provided
   useEffect(() => {
-    if (isWeb3Enabled) {
+    if (isWeb3Enabled ) {
       if (!(chainId == ChainIdDev)) {
         const switchNetwork = async () => {
           try {
@@ -190,16 +190,33 @@ export default function BuySection(props: {
           }
         };
         switchNetwork();
-      } else {
-        toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
-        if (!whitelist.includes(account.toLocaleLowerCase())) {
-          toast.error("You are not whitelisted, request Whitelist from the team");
-        }else{
-          toast.success("You are whitelisted");
-        }
+      } 
+      // else {
+      //   toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
+      //   if (!whitelist.includes(account.toLocaleLowerCase())) {
+      //     toast.error("You are not whitelisted, request Whitelist from the team");
+      //   }else{
+      //     toast.success("You are whitelisted");
+      //   }
+      // }
+    }
+  }, [ChainIdDev, Moralis, chainId, isWeb3Enabled]);
+  //** notify user wallet connectec
+  useEffect(()=>{
+    if(isWeb3Enabled){
+      toast.success(`Wallet connected`); // notify user by a notification
+    }
+  },[isWeb3Enabled])
+  // ** notify user if he's whitelisted or not
+  useEffect(()=>{
+    if(account){
+      if (!whitelist.includes(account.toLocaleLowerCase())) {
+        toast.error("You are not whitelisted, request Whitelist from the team");
+      }else{
+        toast.success("You are whitelisted");
       }
     }
-  }, [isWeb3Enabled]);
+  },[account])
 
   // **
   useEffect(() => {
@@ -220,9 +237,6 @@ export default function BuySection(props: {
   useEffect(() => {
     if (account && newAccount && newAccount != detectedAccount) {
       toast.success(`Account changed ${account.slice(0, 6)}...${account.slice(account.length - 4)}`);
-      if (!whitelist.includes(account.toLocaleLowerCase())) {
-        toast.error("You are not whitelisted, request Whitelist from the team");
-      }
       setDetectedAccount(newAccount);
     }
   }, [newAccount, detectedAccount, account]);
@@ -483,13 +497,13 @@ export default function BuySection(props: {
         <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
           <div className="flex flex-col space-y-4 items-center justify-center ">
             <Lock />
-            <button
+            {/* <button
               onClick={async () => await connectButton()}
               disabled={isWeb3EnableLoading}
               className="btn-grad-1 px-4"
             >
               <i className="fi fi-sr-wallet"></i> Connect Wallet
-            </button>
+            </button> */}
           </div>
         </div>
       </>
