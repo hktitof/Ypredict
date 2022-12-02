@@ -1,46 +1,43 @@
-This is a Fresh project Starter that you can clone and use it directly without needing to set up.
+### How To Use for Developers Only
 
-the following technlogies are existed in this repo, check package.json for more :
+## 🛠 Installation & Set Up
 
-Next js, Tailwind css, Storybook and webpack
+1. Clone the repo CLI
 
-Instructions :
+   ```sh
+   git clone https://github.com/hktitof/my-website.git
+   ```
 
-command 1 : git clone https://github.com/hktitof/FreshProjectStarter.git
-command 2 : yarn install
+2. Install and use the correct version of Node using [NVM](https://github.com/nvm-sh/nvm)
 
+   ```sh
+   nvm install
+   ```
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+3. Install dependencies
 
-## Getting Started
+   ```sh
+   yarn
+   ```
+  4. make sure you have Polygon Mumbai Testnet in your MetaMask Network list, follow the following URL if you don't have it.
 
-First, run the development server:
+    ```sh
+   https://medium.com/stakingbits/how-to-connect-polygon-mumbai-testnet-to-metamask-fc3487a3871f
+   ```
+   
+ 5.  add your wallet to whitelist in the file "config/whitelist/whitelist.ts", make sure your wallet address declared as lowercase in the constant "whitelist"
 
-```bash
-npm run dev
-# or
-yarn dev
+   ```sh
+   config/whitelist/whitelist.ts
 ```
+     
+ 6.  add & get USDC to your wallet for testing purposes, first of all add this address "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747" to your asset in wallet make sure you choose Mumbai Testnet, then click on claim in the following contract, you should have some matic to get USDC .
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```sh
+   https://mumbai.polygonscan.com/address/0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747#writeProxyContract
+   ```
+7. run Development
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+   ```sh
+   yarn dev
+   ```
