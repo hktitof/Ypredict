@@ -56,10 +56,10 @@ export default function PrivateSale(props: {
   setStepsStatus;
 }) {
   const [timeRemaining, setTimeRemaining] = React.useState<number>(null);
-  const [vestingContractAlreadyInvested, setVestingContractAlreadyInvested] = React.useState<number>(72000); // set the initial value here
+  const [vestingContractAlreadyInvested, setVestingContractAlreadyInvested] = React.useState<number>(10000); // set the initial value here
   const [vestingContract_All_SoldedToken, setVestingContract_All_SoldedToken_USDT] = React.useState<number>(null); // this will be in Float USD not USDT
   const [pricePerToken, setPricePerToken] = React.useState<number>(null);
-  const [vestingContractTarget, setVestingContractTarget] = React.useState(300000); // set the target value here
+  const [vestingContractTarget, setVestingContractTarget] = React.useState(72000); // set the target value here
 
   useEffect(() => {
     // this will set the time remaining for the private sale
@@ -152,16 +152,25 @@ export default function PrivateSale(props: {
       {/* From Here again */}
       <div className="row">
         <div className="col-md-12 text-center">
-          <span className="private-on text-success">
-            $
-            {vestingContract_All_SoldedToken
-              ? (vestingContract_All_SoldedToken + vestingContractAlreadyInvested).toLocaleString("en-US")
-              : "..."}
-          </span>
-          /
-          <span className="private-total text-success fw-semibold">
-            ${vestingContractTarget.toLocaleString("en-US")}
-          </span>
+          <div className="flex justify-center py-2">
+            <div className="private-on text-success flex items-center">
+              $
+              {vestingContract_All_SoldedToken ? (
+                (vestingContract_All_SoldedToken + vestingContractAlreadyInvested).toLocaleString("en-US")
+              ) : (
+                <div className="flex space-x-1 animate-pulse ml-1">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+              )}
+            </div>
+
+            <span className="private-total text-success fw-semibold">
+              /${vestingContractTarget.toLocaleString("en-US")}
+            </span>
+          </div>
+
           <div className="progress">
             {/* Progress Bar here */}
             <div
@@ -169,7 +178,7 @@ export default function PrivateSale(props: {
               role="progressbar"
               style={{
                 width:
-                  ( 
+                  (
                     ((vestingContract_All_SoldedToken + vestingContractAlreadyInvested) * 100) /
                     vestingContractTarget
                   ).toString() + "%",

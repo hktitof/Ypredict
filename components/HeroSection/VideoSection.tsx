@@ -1,11 +1,13 @@
 import React from "react";
 /* eslint-disable @next/next/no-img-element */
 export default function VideoSection() {
+
+
   return (
     <div className="col-md-6" style={{ marginRight: "-10px" }}>
       <div className="row">
         <div className="col-md-12">
-          <video style={{ width: "100%" }} controls>
+          <video style={{ width: "100%" }} controls autoPlay muted>
             <source src="img/ypred_promo.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
