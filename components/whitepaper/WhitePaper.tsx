@@ -1,5 +1,5 @@
 import React from 'react'
-
+/* eslint-disable @next/next/no-img-element */
 export default function WhitePaper() {
   return (
     <div className="read-white-paper">
