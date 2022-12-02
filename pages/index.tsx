@@ -88,7 +88,7 @@ export default function Home() {
           stepsStatus={stepsStatus}
           setStepsStatus={setStepsStatus}
         />
-        {/* <TeamPaddnel />
+        <TeamPaddnel />
         <PlatformFeature />
         <PlatformPayment />
         <RevenueSharing />
@@ -98,7 +98,7 @@ export default function Home() {
         <VestingSchedule />
         <RoadMap />
         <FrequentlyAskedQuestions />
-        <InterestedVestingNotification /> */}
+        <InterestedVestingNotification />
 
         <Footer />
       </div>

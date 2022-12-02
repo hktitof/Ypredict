@@ -156,7 +156,7 @@ export default function PrivateSale(props: {
             $
             {vestingContract_All_SoldedToken
               ? (vestingContract_All_SoldedToken + vestingContractAlreadyInvested).toLocaleString("en-US")
-              : ""}
+              : "..."}
           </span>
           /
           <span className="private-total text-success fw-semibold">
@@ -169,7 +169,7 @@ export default function PrivateSale(props: {
               role="progressbar"
               style={{
                 width:
-                  (
+                  ( 
                     ((vestingContract_All_SoldedToken + vestingContractAlreadyInvested) * 100) /
                     vestingContractTarget
                   ).toString() + "%",
@@ -200,12 +200,20 @@ export default function PrivateSale(props: {
           <span className="fw-semibold text-grad1" style={{ fontSize: " 40px" }} id="clock"></span>
         </div>
       </div>
-      <div className="w-full flex justify-center items-center pb-8" style={{ backgroundColor: "#f7f7f7"}}>
+      <div className="w-full flex justify-center items-center pb-8" style={{ backgroundColor: "#f7f7f7" }}>
         {/* <span className="font-semibold text-4xl text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500">
                         {" "}
                         12 days
                     </span> */}
-        {timeRemaining ? <CountDown timeRemaining={timeRemaining} /> : "..."}
+        {timeRemaining ? (
+          <CountDown timeRemaining={timeRemaining} />
+        ) : (
+          <div className="flex justify-center items-center">
+            <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
