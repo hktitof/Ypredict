@@ -1,5 +1,5 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function InterestedVestingNotification() {
   if (typeof window !== "undefined") {
     $(window).on("scroll", function () {
@@ -18,10 +18,10 @@ export default function InterestedVestingNotification() {
         <div className="col-md-4 text-end">
           <div className="token-info-image footer-info-image desktop">
             <div className="token-info-image-div">
-              <img src="img/play-solid.svg" className="video-play-footer-image" />
+              <img src="img/play-solid.svg" className="video-play-footer-image" alt="promo_video.gif"/>
             </div>
 
-            <img src="img/promo_video.gif" className="img-token-info" />
+            <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif"/>
           </div>
         </div>
         <div className="col-md-4">
@@ -36,10 +36,10 @@ export default function InterestedVestingNotification() {
           <div className="footer-info-video-and-cta">
             <div className="token-info-image footer-info-image mobile">
               <div className="token-info-image-div">
-                <img src="img/play-solid.svg" className="video-play-footer-image" />
+                <img src="img/play-solid.svg" className="video-play-footer-image" alt="promo_video.gif"/>
               </div>
 
-              <img src="img/promo_video.gif" className="img-token-info" />
+              <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif"/>
             </div>
 
             <div className="interested-token-sale-details">
@@ -53,7 +53,7 @@ export default function InterestedVestingNotification() {
                   </span>
                 </div>
 
-                <img src="img/interest-ypredict-img.svg" className="interested-img inquire-interested-image" />
+                <img src="img/interest-ypredict-img.svg" className="interested-img inquire-interested-image" alt="promo_video.gif"/>
               </div>
             </div>
           </div>

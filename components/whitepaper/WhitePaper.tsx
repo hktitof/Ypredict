@@ -26,7 +26,7 @@ export default function WhitePaper() {
 
         <div className="white-paper-title">White Paper</div>
         <div className="download-pdf-text">Download the PDF</div>
-        <img src="img/pdf-icon.svg" className="pdf-icon" />
+        <img src="img/pdf-icon.svg" className="pdf-icon" alt="pdf icon svg"/>
         <a href="https://ypredict.ai/ypredict-whitepaper.pdf" className="nav-header-button nav-header-button-register download-now">Download
             Now</a>
 

@@ -5,7 +5,7 @@ export default function PlatformPayment() {
     <div className="platform-payment">
 
             <div className="platform-payment-image">
-                <img src="img/platform-payment-image.svg" className="img-platform-payment" />
+                <img src="img/platform-payment-image.svg" className="img-platform-payment" alt="platform payment"/>
             </div>
             <div className="platform-payment-info">
 

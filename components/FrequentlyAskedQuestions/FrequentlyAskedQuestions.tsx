@@ -1,5 +1,5 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function FrequentlyAskedQuestions() {
   let acc;
   if (typeof window !== "undefined") {

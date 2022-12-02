@@ -1,5 +1,5 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function TeamPanel() {
   if (typeof window !== "undefined") {
     let acc = window.document.getElementsByClassName("accordion acc-title");
@@ -266,7 +266,7 @@ export default function TeamPanel() {
               </div>
               <div className="team-member-profile flex">
                 <a href="https://github.com/parv3213">
-                  <img src="img/github.svg" className="profile-social-icons" />
+                  <img src="img/github.svg" className="profile-social-icons" alt="team member"/>
                 </a>
                 <a href="https://www.linkedin.com/in/parv3213">
                   <img src="img/linkedin.svg" className="profile-social-icons" alt="team member" />
@@ -288,7 +288,7 @@ export default function TeamPanel() {
                   <img src="img/github.svg" className="profile-social-icons" alt="team member" />
                 </a>
                 <a href="https://linkedin.com/in/elisha-bulalu">
-                  <img src="img/linkedin.svg" className="profile-social-icons" />
+                  <img src="img/linkedin.svg" className="profile-social-icons" alt="team member" />
                 </a>
               </div>
             </div>
@@ -304,10 +304,10 @@ export default function TeamPanel() {
               </div>
               <div className="team-member-profile flex">
                 <a href="https://github.com/DmitriyR54">
-                  <img src="img/github.svg" className="profile-social-icons" />
+                  <img src="img/github.svg" className="profile-social-icons" alt="team member" />
                 </a>
                 <a href="https://linkedin.com/in/dmytro-ruptash">
-                  <img src="img/linkedin.svg" className="profile-social-icons" />
+                  <img src="img/linkedin.svg" className="profile-social-icons" alt="team member"/>
                 </a>
               </div>
             </div>
@@ -315,7 +315,7 @@ export default function TeamPanel() {
 
           <div className="team-member developer advisors">
             <div className="team-image-overlay"></div>
-            <img src="img/Alex_Sakai.png" className="team-member-img" />
+            <img src="img/Alex_Sakai.png" className="team-member-img" alt="team member"/>
             <div className="team-member-info info-1">
               <div className="team-name-and-designation">
                 <span className="team-member-name">Alex Sakai</span>
@@ -323,10 +323,10 @@ export default function TeamPanel() {
               </div>
               <div className="team-member-profile flex">
                 <a href="http://github.com/best-lucky1030">
-                  <img src="img/github.svg" className="profile-social-icons" />
+                  <img src="img/github.svg" className="profile-social-icons" alt="team member"/>
                 </a>
                 <a href="https://www.linkedin.com/in/alex-sakai-4b4557233">
-                  <img src="img/linkedin.svg" className="profile-social-icons" />
+                  <img src="img/linkedin.svg" className="profile-social-icons" alt="team member"/>
                 </a>
               </div>
             </div>

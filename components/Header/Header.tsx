@@ -1,5 +1,5 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function Header() {
   if (typeof window !== "undefined") {
     $(document).ready(function () {
@@ -16,7 +16,7 @@ export default function Header() {
   return (
     <div className="header bg-white">
       <div className="logo-header">
-        <img src="/logo.svg" className="header-logo" />
+        <img src="/logo.svg" className="header-logo" alt="logo header"/>
       </div>
       <div className="nav-header">
         <a href="../"  className="relative nav-header-links hover:cursor-pointer">
@@ -46,7 +46,7 @@ export default function Header() {
 
       <div className="hamberguer-menu-section">
         <div  className="hamberguer-menu-anchor hover:cursor-pointer">
-          <img src="img/bars-solid.svg" className="mobile-hamberuger" />
+          <img src="img/bars-solid.svg" className="mobile-hamberuger" alt="barssolid.svg" />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function TokenSale() {
   return (
     <div className="token-sale">
@@ -31,7 +31,7 @@ export default function TokenSale() {
 
           <div className="token-sale-table-row table-row">
             <div className="row-image">
-              <img src="img/private-sale-row-image.svg" className="token-sale-row-image" />
+              <img src="img/private-sale-row-image.svg" className="token-sale-row-image" alt="private-sale-row-image.svg"/>
             </div>
             <div className="header-text">Private Sale</div>
             <div className="header-text withbgpad">2m</div>
@@ -43,7 +43,7 @@ export default function TokenSale() {
 
           <div className="token-sale-table-row table-row">
             <div className="row-image">
-              <img src="img/pre-sale-row-image.svg" className="token-sale-row-image" />
+              <img src="img/pre-sale-row-image.svg" className="token-sale-row-image" alt="pre-sale-row-image.svg"/>
             </div>
             <div className="header-text">Pre Sale</div>
             <div className="header-text withbgpad">8m</div>
@@ -55,7 +55,7 @@ export default function TokenSale() {
 
           <div className="token-sale-table-row table-row">
             <div className="row-image">
-              <img src="img/public-sale-row-image.svg" className="token-sale-row-image" />
+              <img src="img/public-sale-row-image.svg" className="token-sale-row-image" alt="public-sale-row-image.svg"/>
             </div>
             <div className="header-text">Public Sale</div>
             <div className="header-text withbgpad">18m</div>

@@ -1,5 +1,5 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function VideoSection() {
   return (
     <div className="col-md-6" style={{ marginRight: "-10px" }}>

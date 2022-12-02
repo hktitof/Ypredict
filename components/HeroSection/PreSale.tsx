@@ -1,5 +1,5 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function PreSale() {
   return (
     <div className="" id="presale" role="tabpanel" aria-labelledby="deals-tab">

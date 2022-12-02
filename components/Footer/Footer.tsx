@@ -1,12 +1,12 @@
 import React from "react";
-
+/* eslint-disable @next/next/no-img-element */
 export default function Footer() {
   return (
     <div className="footer">
       <div className="footer-row-1">
         <div className="footer-col-1">
           <div className="footer-logo">
-            <img src="/footer-logo.svg" className="footer-logo-img" />
+            <img src="/footer-logo.svg" className="footer-logo-img" alt="Footer Logo" />
             yPredict
           </div>
           <div className="footer-notes">

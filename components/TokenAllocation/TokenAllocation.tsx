@@ -1,5 +1,5 @@
 import React from 'react'
-
+/* eslint-disable @next/next/no-img-element */
 export default function TokenAllocation() {
   return (
     <div className="token-allocation">
@@ -7,7 +7,7 @@ export default function TokenAllocation() {
     <div className="token-allocation-title">Token Allocations</div>
     <div className="token-allocation-image">
 
-        <img src="img/token-allocation-image.svg" className="token-allocation-img" />
+        <img src="img/token-allocation-image.svg" className="token-allocation-img"alt="token-allocation-image.svg" />
 
     </div>
 

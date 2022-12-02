@@ -44,7 +44,7 @@ const GetUserAllocatedTokens = async (
   const message = await Moralis.executeFunction(readOptions);
   useState_UserNumberOfTokens(message);
 };
-
+/* eslint-disable @next/next/no-img-element */
 export default function BuySection(props: {
   showModal;
   setShowModal;

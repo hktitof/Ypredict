@@ -12,7 +12,7 @@ export default function VestingSchedule() {
                 Designed with a foundation of trust, ride the wave of growth with us while also having flexibility through a simple vesting schedule. Refer to the whitepaper for more details.
             </div>
             <div className="vesting-image-section">
-                <img src="img/vesting-schedule.png" className="vesting-image" />
+                <img src="img/vesting-schedule.png" className="vesting-image" alt="vesting Schedule"/>
             </div>
 
 

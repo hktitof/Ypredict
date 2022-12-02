@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { BigNumber, ethers } from "ethers";
 import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
 import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
-
+/* eslint-disable @next/next/no-img-element */
 // format span to show the time left
 const getFormatDateTime = seconds => {
   const formatDateTime = time => {

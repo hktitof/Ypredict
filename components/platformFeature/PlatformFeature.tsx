@@ -47,12 +47,12 @@ export default function PlatformFeature() {
             </div>
             <div className="features-image-section">
                 {/* <!-- <img src="img/platform-image-1.svg" className="feature-image" /> --> */}
-                <img src="img/pink.png" className="feature-image pink" />
-                <img src="img/green.png" className="feature-image green" />
-                <img src="img/yellow.png" className="feature-image yellow" />
-                <img src="img/purple.png" className="feature-image purple" />
-                <img src="img/blue.png" className="feature-image blue" />
-                <img src="img/orange.png" className="feature-image orange" />
+                <img src="img/pink.png" className="feature-image pink" alt='pink image' />
+                <img src="img/green.png" className="feature-image green" alt='green image'/>
+                <img src="img/yellow.png" className="feature-image yellow"alt='yellow image' />
+                <img src="img/purple.png" className="feature-image purple" alt='purple image'/>
+                <img src="img/blue.png" className="feature-image blue" alt='blue image'/>
+                <img src="img/orange.png" className="feature-image orange" alt='orange image'/>
             </div>
 
         </div>
