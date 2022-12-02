@@ -1,10 +1,10 @@
 import React from "react";
 /* eslint-disable @next/next/no-img-element */
-export default function PreSale() {
+export default function PublicSale() {
   return (
-    <div className="" id="presale" role="tabpanel" aria-labelledby="deals-tab">
+    <div className="" id="public" role="tabpanel" aria-labelledby="deals-tab">
       <div className="row">
-        <div className="col-sm-3 col-md-4">
+      <div className="col-sm-3 col-md-4">
           <div className="dropdown">
             <button
               className="btn dropdown-toggle flex items-center"
@@ -56,7 +56,7 @@ export default function PreSale() {
           <span className="private-on text-primary">$104,000</span>/
           <span className="private-total text-primary fw-semibold">$300,000</span>
           <div className="progress">
-            <div
+          <div
               className="progress-bar progress-bar-striped progress-bar-animated bg-primary"
               role="progressbar"
               style={{ width: "77%" }}
@@ -78,11 +78,11 @@ export default function PreSale() {
         <div className="overlay_lock form-presale">
           <div className="row" style={{ marginTop: " 20px" }}>
             <div className="col-sm-6 text-center">
-              <p className="text-dark2 text-box-sub-title">Presale Sale Price</p>
+              <p className="text-dark2 text-box-sub-title">Public Sale Price</p>
               <p className="text-box-content"> $0.037</p>
             </div>
             <div className="col-sm-6 text-center">
-              <p className="text-dark2 text-box-sub-title "> Presale Sale Goal</p>
+              <p className="text-dark2 text-box-sub-title "> Public Sale Goal</p>
               <p className="text-box-content"> $300,000</p>
             </div>
           </div>
@@ -97,45 +97,45 @@ export default function PreSale() {
             </div>
           </div>
           <div className="w-full flex flex-row space-x-4 justify-center mt-4 mb-4">
-            <div className="flex items-center space-x-1">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-7 w-7 ">
-                <polygon fill="#4db6ac" points="24,44 2,22.5 10,5 38,5 46,22.5" />
-                <path
-                  fill="#fff"
-                  d="M38,22c0-1.436-4.711-2.635-11-2.929V16h8v-6H13v6h8v3.071C14.711,19.365,10,20.564,10,22	s4.711,2.635,11,2.929V36h6V24.929C33.289,24.635,38,23.436,38,22z M24,24c-6.627,0-12-1.007-12-2.25c0-1.048,3.827-1.926,9-2.176	v3.346c0.96,0.06,1.96,0.08,3,0.08s2.04-0.02,3-0.08v-3.346c5.173,0.25,9,1.128,9,2.176C36,22.993,30.627,24,24,24z"
-                />
-              </svg>
-
-              <div className="flex flex-col font-normal">
-                <input
-                  // ref={inputRef}
-                  // onChange={handleInputChange}
-                  // defaultValue={0}
-                  type="number"
-                  className="border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
-                  placeholder="please input amount of USDT"
-                />
-                {/* {showMinimumMessage ? (
+          <div className="flex items-center space-x-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-7 w-7 ">
+              <polygon fill="#4db6ac" points="24,44 2,22.5 10,5 38,5 46,22.5" />
+              <path
+                fill="#fff"
+                d="M38,22c0-1.436-4.711-2.635-11-2.929V16h8v-6H13v6h8v3.071C14.711,19.365,10,20.564,10,22	s4.711,2.635,11,2.929V36h6V24.929C33.289,24.635,38,23.436,38,22z M24,24c-6.627,0-12-1.007-12-2.25c0-1.048,3.827-1.926,9-2.176	v3.346c0.96,0.06,1.96,0.08,3,0.08s2.04-0.02,3-0.08v-3.346c5.173,0.25,9,1.128,9,2.176C36,22.993,30.627,24,24,24z"
+              />
+              
+            </svg>
+            
+            <div className="flex flex-col font-normal">
+              <input
+                // ref={inputRef}
+                // onChange={handleInputChange}
+                // defaultValue={0}
+                type="number"
+                className="border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
+                placeholder="please input amount of USDT"
+              />
+              {/* {showMinimumMessage ? (
                 <span className="text-xs">
                   Minimum is {parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest}
                 </span>
               ) : (
                 <></>
               )} */}
-              </div>
-            </div>
-
-            <div className="flex flex-row space-x-2 items-center fw-semibold">
-              =
-              <img src="/ypred-coin.png" alt="" style={{ width: " 30px", marginLeft: " 10px" }} />
-              <span id="ypred-amount">0</span>
             </div>
           </div>
-          <div className="w-full flex flex-row justify-center space-x-2">
+
+          <div className="flex flex-row space-x-2 items-center fw-semibold">
+            =
+            <img src="/ypred-coin.png" alt="" style={{ width: " 30px", marginLeft: " 10px" }} />
+            <span id="ypred-amount">0</span>
+          </div>
+        </div>
+        <div className="w-full flex flex-row justify-center space-x-2">
             <button
-              //  onClick={async () => clickTestButton()}
-              className="btn-grad-1 flex "
-            >
+            //  onClick={async () => clickTestButton()}
+             className="btn-grad-1 flex ">
               <i className="fi fi-sr-wallet"></i> Buy with Metamask
             </button>
 

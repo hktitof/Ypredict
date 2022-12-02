@@ -40,17 +40,16 @@ export default function CardHeader(props: { selectedSection; setSelectedSection 
           </div>
         </li>
         <li className="nav-item">
-          <a
-            className="nav-link disabled"
-            style={{ color: "white" }}
-            href="#public"
+          <div
+            onClick={() => props.setSelectedSection("public")}
+            className={`nav-link hover:cursor-pointer ${props.selectedSection === "public" ? "active" : "text-white"}`}
             role="tab"
             aria-controls="deals"
             aria-selected="false"
           >
             <i className="fi fi-sr-lock"></i>
             Public
-          </a>
+          </div>
         </li>
       </ul>
     </div>

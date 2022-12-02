@@ -2,6 +2,7 @@ import React from "react";
 import BuySection from "./BuySection";
 import CardHeader from "./CardHeader";
 import PreSale from "./PreSale";
+import PublicSale from "./PublicSale";
 import VideoSection from "./VideoSection";
 import { useEffect } from "react";
 import { BigNumber, ethers } from "ethers";
@@ -138,6 +139,7 @@ export default function HeroSection(props: {
                     />
                   )}
                   {selectedSection === "presale" && <PreSale />}
+                  {selectedSection === "public" && <PublicSale />}
                   {/* END PRESALE  */}
 
                   <div className="tab-pane" id="public" role="tabpanel" aria-labelledby="deals-tab">
