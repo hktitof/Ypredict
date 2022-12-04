@@ -1,4 +1,4 @@
-import React, { useInsertionEffect } from "react";
+import React, { useInsertionEffect, useRef } from "react";
 import { useMoralis, useChain, useWeb3ExecuteFunction, MoralisProvider } from "react-moralis";
 import { useEffect } from "react";
 import Lock from "./icon/Lock";
@@ -44,6 +44,21 @@ const GetUserAllocatedTokens = async (
   const message = await Moralis.executeFunction(readOptions);
   useState_UserNumberOfTokens(message);
 };
+// * this function will return if desiredAmountToAllow if greater than the balance of USDT of the user.
+const checkUserIfhadUSDT = async (contract_Address, contract_ABI, userAddress, desiredAmountToAllow, Moralis) => {
+  const readOptions = {
+    contractAddress: contract_Address,
+    functionName: "balanceOf",
+    abi: contract_ABI,
+    params: {
+      account: userAddress,
+    },
+  };
+  // * Note : USDT has 6 decimals
+  const message = await Moralis.executeFunction(readOptions); // this should return BigNumber,
+
+  return BigNumber.from(message.toString()).gte(desiredAmountToAllow);
+};
 /* eslint-disable @next/next/no-img-element */
 export default function BuySection(props: {
   showModal;
@@ -71,6 +86,7 @@ export default function BuySection(props: {
   const [showMinimumMessage, setShowMinimumMessage] = React.useState<boolean>(false);
   const [chainId, setChainID] = React.useState<number>(1); // Mumbai ChainId
   const [ChainIdDev, setChainIdDev] = React.useState<number>(80001); // we testing in this chain
+  const butButtonRef = useRef<HTMLButtonElement>(null);
 
   const connectButton = async () => {
     props.setShowModal(true);
@@ -179,7 +195,7 @@ export default function BuySection(props: {
 
   // ** Notify user wallet is connected only when user ONLY!! using the network provided
   useEffect(() => {
-    if (isWeb3Enabled ) {
+    if (isWeb3Enabled) {
       if (!(chainId == ChainIdDev)) {
         const switchNetwork = async () => {
           try {
@@ -190,7 +206,7 @@ export default function BuySection(props: {
           }
         };
         switchNetwork();
-      } 
+      }
       // else {
       //   toast.success(`Wallet connected ${account.slice(0, 6)}...${account.slice(account.length - 4)}`); // notify user by a notification
       //   if (!whitelist.includes(account.toLocaleLowerCase())) {
@@ -202,21 +218,21 @@ export default function BuySection(props: {
     }
   }, [ChainIdDev, Moralis, chainId, isWeb3Enabled]);
   //** notify user wallet connectec
-  useEffect(()=>{
-    if(isWeb3Enabled){
+  useEffect(() => {
+    if (isWeb3Enabled) {
       toast.success(`Wallet connected`); // notify user by a notification
     }
-  },[isWeb3Enabled])
+  }, [isWeb3Enabled]);
   // ** notify user if he's whitelisted or not
-  useEffect(()=>{
-    if(account){
+  useEffect(() => {
+    if (account) {
       if (!whitelist.includes(account.toLocaleLowerCase())) {
         toast.error("You are not whitelisted, request Whitelist from the team");
-      }else{
+      } else {
         toast.success("You are whitelisted");
       }
     }
-  },[account])
+  }, [account]);
 
   // **
   useEffect(() => {
@@ -243,9 +259,6 @@ export default function BuySection(props: {
 
   //** Display values when com is re-rendered
   console.log("Account list : ", account);
-  if (userNumberOfTokens) {
-    console.log("User Allocated Tokens : ", ethers.utils.formatEther(userNumberOfTokens.toString()));
-  }
 
   //** */ this will execture when Is_Step_1_transaction_moining is changed to true
   useEffect(() => {
@@ -263,7 +276,6 @@ export default function BuySection(props: {
           },
         };
         const message = await Moralis.executeFunction(readOptions);
-        // TODO : continue here, you need to fix MaxListern\ExceedeWarnings by copying code from here, and put it in another interval
         const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
           .mul(BigNumber.from(ypresUSDT_price_PerToekn))
           .toString();
@@ -346,10 +358,12 @@ export default function BuySection(props: {
                   props.setStepsStatus({ ...props.stepsStatus });
                   setYpredAmountToBuy("0"); // reset the amount to buy
                   setTokenAmount_By_USDT("0"); // state for display next to input, reset the amount to buy
-                  inputRef.current.value =""// reset the input value
+                  inputRef.current.value = ""; // reset the input value
                   setUserNumberOfTokens(
                     BigNumber.from(allocatedToken_After.split(".")[0]).mul(BigNumber.from("1000000000000000000"))
                   );
+                  butButtonRef.current.disabled = false;
+                  console.log("buy Button Enabled");
                   toast.success("Transaction is Confirmed");
                   console.log("**************** this is the token after **********", allocatedToken_After);
                   setUserNumberOfTokens(BigNumber.from(message)); // set user new number of tokens, from the result of allocatedTokens
@@ -361,6 +375,8 @@ export default function BuySection(props: {
           })
           .catch(error => {
             console.log("error Occured while calling approve: ", error);
+            butButtonRef.current.disabled = false;
+            console.log("buy Button Enabled");
             IsErrorOccured = true;
             toast.error("Error Occured while approving transaction");
             props.stepsStatus.step_2.status = "error";
@@ -376,59 +392,71 @@ export default function BuySection(props: {
 
   console.log("ButSection is re-rendered!!!!!");
 
-  // TODO : fix a user if not in whitelist it should not be able to buy tokens, and show to him that he is not in whitelist
-
   const clickTestButton_Action = async () => {
     props.stepsStatus.step_1.status = "waiting_approve";
     props.setShowBuyTokenModal(true);
   };
-
-  const clickTestButton = () => {
+  const clickTestButton = async () => {
     console.log("Test Button Clicked!");
-    props.stepsStatus.step_1.status = "waiting_approve";
-    props.setStepsStatus(props.stepsStatus);
-    props.setShowBuyTokenModal(true);
-    const approveUSDC = async () => {
-      //** Uncomment here to get the transaction */
-      console.log("-----------------");
+    butButtonRef.current.disabled = true;
+    console.log("buy Button disabled");
+    const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
+      .mul(BigNumber.from(ypresUSDT_price_PerToekn))
+      .toString();
+    const hasUSDT = await checkUserIfhadUSDT(USDC_ContractAddress, USDC_ABI, account, approvedValueToSpend, Moralis);
+    // * this will be only executed when the user has USDT in his balance
+    if (hasUSDT) {
+      props.stepsStatus.step_1.status = "waiting_approve";
+      props.setStepsStatus(props.stepsStatus);
+      props.setShowBuyTokenModal(true);
+      const approveUSDC = async () => {
+        //** Uncomment here to get the transaction */
+        console.log("-----------------");
 
-      //** Approve USDC to be spent by the contract */
-      let IsErrorOccured = false;
-      let transaction: Moralis.ExecuteFunctionResult = null;
-      const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
-        .mul(BigNumber.from(ypresUSDT_price_PerToekn))
-        .toString();
-      const sendOptions = {
-        contractAddress: USDC_ContractAddress,
-        functionName: "approve",
-        abi: USDC_ABI,
-        params: {
-          spender: YPredictPrivateSale_address,
-          amount: approvedValueToSpend,
-        },
-      };
+        //** Approve USDC to be spent by the contract */
+        let IsErrorOccured = false;
+        let transaction: Moralis.ExecuteFunctionResult = null;
+        const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
+          .mul(BigNumber.from(ypresUSDT_price_PerToekn))
+          .toString();
+        const sendOptions = {
+          contractAddress: USDC_ContractAddress,
+          functionName: "approve",
+          abi: USDC_ABI,
+          params: {
+            spender: YPredictPrivateSale_address,
+            amount: approvedValueToSpend,
+          },
+        };
 
-      // ** TODO : continue here fix loading it should shows the time for waiting the approval
-      await Moralis.executeFunction(sendOptions)
-        .then(res => {
-          console.log("result of calling approve: ", res);
-          transaction = res;
-        })
-        .catch(error => {
-          console.log("error Occured while calling approve: ", error);
-          IsErrorOccured = true;
-          toast.error("Error in Approving USDT transaction");
-          props.stepsStatus.step_1.status = "error";
+        // ** TODO : continue here fix loading it should shows the time for waiting the approval
+        await Moralis.executeFunction(sendOptions)
+          .then(res => {
+            console.log("result of calling approve: ", res);
+            transaction = res;
+          })
+          .catch(error => {
+            console.log("error Occured while calling approve: ", error);
+            butButtonRef.current.disabled = false;
+            console.log("buy Button Enabled");
+            IsErrorOccured = true;
+            toast.error("Error in Approving USDT transaction");
+            props.stepsStatus.step_1.status = "error";
+            props.setStepsStatus({ ...props.stepsStatus });
+          });
+
+        if (!IsErrorOccured || transaction != null) {
+          props.stepsStatus.step_1.status = "waiting_transaction_Mining";
           props.setStepsStatus({ ...props.stepsStatus });
-        });
-
-      if (!IsErrorOccured || transaction != null) {
-        props.stepsStatus.step_1.status = "waiting_transaction_Mining";
-        props.setStepsStatus({ ...props.stepsStatus });
-        setIs_Step_1_transaction_moining(true);
-      }
-    };
-    approveUSDC();
+          setIs_Step_1_transaction_moining(true);
+        }
+      };
+      approveUSDC();
+    } else {
+      butButtonRef.current.disabled = false;
+      console.log("buy Button Enabled");
+      toast.error("You don't have enough USDT");
+    }
 
     console.log("Clicked on Test Button action finished!");
   };
@@ -682,7 +710,7 @@ export default function BuySection(props: {
             </span>
           </div>
           <div className="w-full flex flex-row justify-center space-x-2">
-            <button onClick={async () => clickTestButton()} className="btn-grad-1 flex ">
+            <button ref={butButtonRef} onClick={async () => clickTestButton()} className="btn-grad-1 flex ">
               <i className="fi fi-sr-wallet"></i> Buy with Metamask
             </button>
 
