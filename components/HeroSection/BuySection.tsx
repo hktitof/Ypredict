@@ -45,6 +45,15 @@ const GetUserAllocatedTokens = async (
   useState_UserNumberOfTokens(message);
 };
 // * this function will return if desiredAmountToAllow if greater than the balance of USDT of the user.
+/**
+ * 
+ * @param contract_Address : the contract address of USDT in mainnet or USDC in testnet
+ * @param contract_ABI : contract ABI
+ * @param userAddress : user account address, it should be passed as account from useMoralis
+ * @param desiredAmountToAllow : this should be the amount of USDT(mainnet) or USDC(testnet) that user wanted to allow
+ * @param Moralis : it's from useMoralis pass it to this function
+ * @returns 
+ */
 const checkUserIfhadUSDT = async (contract_Address, contract_ABI, userAddress, desiredAmountToAllow, Moralis) => {
   const readOptions = {
     contractAddress: contract_Address,
