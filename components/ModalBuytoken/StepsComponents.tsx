@@ -55,7 +55,7 @@ export const Step_3 = (props: { status }) => {
           {/* Icon Status */}
           {getStatusIcon(props.status)}
         </div>
-        <span className="">step 3</span>
+        <span className="">Confirmed</span>
       </div>
     </>
   );

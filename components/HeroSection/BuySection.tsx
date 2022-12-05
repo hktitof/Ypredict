@@ -406,18 +406,28 @@ export default function BuySection(props: {
     props.setShowBuyTokenModal(true);
   };
   const clickTestButton = async () => {
-    console.log("Test Button Clicked!");
-    butButtonRef.current.disabled = true;
-    console.log("buy Button disabled");
+    console.log("Buy Button Clicked!");
+    butButtonRef.current.disabled = true;// disable buy token button
     const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
       .mul(BigNumber.from(ypresUSDT_price_PerToekn))
       .toString();
     const hasUSDT = await checkUserIfhadUSDT(USDC_ContractAddress, USDC_ABI, account, approvedValueToSpend, Moralis);
-    // * this will be only executed when the user has USDT in his balance
-    if (hasUSDT) {
-      props.stepsStatus.step_1.status = "waiting_approve";
-      props.setStepsStatus(props.stepsStatus);
-      props.setShowBuyTokenModal(true);
+    if(!hasUSDT) {
+      butButtonRef.current.disabled = false;
+      console.log("buy Button Enabled");
+      toast.error("You don't have enough USDT");
+      return;
+    }
+    const IsWhiteListed=whitelist.includes(account.toLocaleLowerCase());
+    if(!IsWhiteListed) {
+      toast.error("You are not whitelisted");
+      butButtonRef.current.disabled = false;// set buy token enabled 
+      return;
+    }
+    // * show Buy Token Modal progress bar, 
+      props.stepsStatus.step_1.status = "waiting_approve";// change step 1 state to "waiting_approve"
+      props.setStepsStatus(props.stepsStatus);// set the state
+      props.setShowBuyTokenModal(true);// show buy token Modal
       const approveUSDC = async () => {
         //** Uncomment here to get the transaction */
         console.log("-----------------");
@@ -461,11 +471,7 @@ export default function BuySection(props: {
         }
       };
       approveUSDC();
-    } else {
-      butButtonRef.current.disabled = false;
-      console.log("buy Button Enabled");
-      toast.error("You don't have enough USDT");
-    }
+   
 
     console.log("Clicked on Test Button action finished!");
   };
@@ -546,6 +552,8 @@ export default function BuySection(props: {
       </>
     );
   };
+
+  //* function for USDT selection
   const handleInputChange = event => {
     const re = /^[0-9\b]+$/;
     if (event.target.value === "") {
