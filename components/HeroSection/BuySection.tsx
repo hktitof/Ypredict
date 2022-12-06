@@ -46,13 +46,13 @@ const GetUserAllocatedTokens = async (
 };
 // * this function will return if desiredAmountToAllow if greater than the balance of USDT of the user.
 /**
- * 
+ *
  * @param contract_Address : the contract address of USDT in mainnet or USDC in testnet
  * @param contract_ABI : contract ABI
  * @param userAddress : user account address, it should be passed as account from useMoralis
  * @param desiredAmountToAllow : this should be the amount of USDT(mainnet) or USDC(testnet) that user wanted to allow
  * @param Moralis : it's from useMoralis pass it to this function
- * @returns 
+ * @returns
  */
 const checkUserIfhadUSDT = async (contract_Address, contract_ABI, userAddress, desiredAmountToAllow, Moralis) => {
   const readOptions = {
@@ -407,71 +407,70 @@ export default function BuySection(props: {
   };
   const clickTestButton = async () => {
     console.log("Buy Button Clicked!");
-    butButtonRef.current.disabled = true;// disable buy token button
+    butButtonRef.current.disabled = true; // disable buy token button
     const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
       .mul(BigNumber.from(ypresUSDT_price_PerToekn))
       .toString();
     const hasUSDT = await checkUserIfhadUSDT(USDC_ContractAddress, USDC_ABI, account, approvedValueToSpend, Moralis);
-    if(!hasUSDT) {
+    if (!hasUSDT) {
       butButtonRef.current.disabled = false;
       console.log("buy Button Enabled");
       toast.error("You don't have enough USDT");
       return;
     }
-    const IsWhiteListed=whitelist.includes(account.toLocaleLowerCase());
-    if(!IsWhiteListed) {
+    const IsWhiteListed = whitelist.includes(account.toLocaleLowerCase());
+    if (!IsWhiteListed) {
       toast.error("You are not whitelisted");
-      butButtonRef.current.disabled = false;// set buy token enabled 
+      butButtonRef.current.disabled = false; // set buy token enabled
       return;
     }
-    // * show Buy Token Modal progress bar, 
-      props.stepsStatus.step_1.status = "waiting_approve";// change step 1 state to "waiting_approve"
-      props.setStepsStatus(props.stepsStatus);// set the state
-      props.setShowBuyTokenModal(true);// show buy token Modal
-      const approveUSDC = async () => {
-        //** Uncomment here to get the transaction */
-        console.log("-----------------");
+    // * show Buy Token Modal progress bar,
+    props.stepsStatus.step_1.status = "waiting_approve"; // change step 1 state to "waiting_approve"
+    props.setStepsStatus(props.stepsStatus); // set the state
+    props.setShowBuyTokenModal(true); // show buy token Modal
+    const approveUSDC = async () => {
+      //** Uncomment here to get the transaction */
+      console.log("-----------------");
 
-        //** Approve USDC to be spent by the contract */
-        let IsErrorOccured = false;
-        let transaction: Moralis.ExecuteFunctionResult = null;
-        const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
-          .mul(BigNumber.from(ypresUSDT_price_PerToekn))
-          .toString();
-        const sendOptions = {
-          contractAddress: USDC_ContractAddress,
-          functionName: "approve",
-          abi: USDC_ABI,
-          params: {
-            spender: YPredictPrivateSale_address,
-            amount: approvedValueToSpend,
-          },
-        };
-
-        // ** TODO : continue here fix loading it should shows the time for waiting the approval
-        await Moralis.executeFunction(sendOptions)
-          .then(res => {
-            console.log("result of calling approve: ", res);
-            transaction = res;
-          })
-          .catch(error => {
-            console.log("error Occured while calling approve: ", error);
-            butButtonRef.current.disabled = false;
-            console.log("buy Button Enabled");
-            IsErrorOccured = true;
-            toast.error("Error in Approving USDT transaction");
-            props.stepsStatus.step_1.status = "error";
-            props.setStepsStatus({ ...props.stepsStatus });
-          });
-
-        if (!IsErrorOccured || transaction != null) {
-          props.stepsStatus.step_1.status = "waiting_transaction_Mining";
-          props.setStepsStatus({ ...props.stepsStatus });
-          setIs_Step_1_transaction_moining(true);
-        }
+      //** Approve USDC to be spent by the contract */
+      let IsErrorOccured = false;
+      let transaction: Moralis.ExecuteFunctionResult = null;
+      const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
+        .mul(BigNumber.from(ypresUSDT_price_PerToekn))
+        .toString();
+      const sendOptions = {
+        contractAddress: USDC_ContractAddress,
+        functionName: "approve",
+        abi: USDC_ABI,
+        params: {
+          spender: YPredictPrivateSale_address,
+          amount: approvedValueToSpend,
+        },
       };
-      approveUSDC();
-   
+
+      // ** TODO : continue here fix loading it should shows the time for waiting the approval
+      await Moralis.executeFunction(sendOptions)
+        .then(res => {
+          console.log("result of calling approve: ", res);
+          transaction = res;
+        })
+        .catch(error => {
+          console.log("error Occured while calling approve: ", error);
+          butButtonRef.current.disabled = false;
+          console.log("buy Button Enabled");
+          IsErrorOccured = true;
+          toast.error("Error in Approving USDT transaction");
+          props.stepsStatus.step_1.status = "error";
+          props.setStepsStatus({ ...props.stepsStatus });
+        });
+
+      if (!IsErrorOccured || transaction != null) {
+        props.stepsStatus.step_1.status = "waiting_transaction_Mining";
+        props.setStepsStatus({ ...props.stepsStatus });
+        setIs_Step_1_transaction_moining(true);
+      }
+    };
+    approveUSDC();
 
     console.log("Clicked on Test Button action finished!");
   };
@@ -482,11 +481,14 @@ export default function BuySection(props: {
         <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center"></div>
         <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
           <div className="flex flex-col space-y-4 items-center justify-center ">
-            <Lock />
+            {/* <Lock /> */}
+            <div className="text-grad1 " style={{ fontSize: " 100px" }}>
+              <i className="fi fi-rr-lock"></i>
+            </div>
             <button
               onClick={async () => await connectButton()}
               disabled={isWeb3EnableLoading}
-              className="btn-grad-1 px-4"
+              className="btn-grad-1 px-4 -translate-y-8"
             >
               <i className="fi fi-sr-wallet"></i> Connect Wallet
             </button>
@@ -539,7 +541,10 @@ export default function BuySection(props: {
         <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center"></div>
         <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
           <div className="flex flex-col space-y-4 items-center justify-center ">
-            <Lock />
+            {/* <Lock /> */}
+            <div className="text-grad1 " style={{ fontSize: " 100px" }}>
+              <i className="fi fi-rr-lock"></i>
+            </div>
             {/* <button
               onClick={async () => await connectButton()}
               disabled={isWeb3EnableLoading}
@@ -553,46 +558,17 @@ export default function BuySection(props: {
     );
   };
 
-  //* function for USDT selection
-  const handleInputChange = event => {
-    const re = /^[0-9\b]+$/;
-    if (event.target.value === "") {
-      setShowMinimumMessage(false);
-      setInputState(parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest);
-    } else if (re.test(event.target.value)) {
-      // if he enter a number
-      // if the number is less than min amount to invest
-      if (parseFloat(event.target.value) > parseFloat(minAmountToInvest)) {
-        setShowMinimumMessage(false); // hide the message of minimum amount
-        setInputState(event.target.value); // set the input state
-        const NumberOfToken_from_USDT = BigNumber.from(
-          BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
-        ).div(BigNumber.from("36000")); // calculate the number of token from USDT
-        setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
-        setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
-      } else {
-        setShowMinimumMessage(true); // show the message of minimum amount
-        let mintAmount = minAmountToInvest; // this will reserved to check if amount is minAmount less than 1
-        if (parseFloat(minAmountToInvest) < 1) mintAmount = "1";
-        inputRef.current.value = mintAmount;
-        setInputState(mintAmount); // set the input state
-        const NumberOfToken_from_USDT = BigNumber.from(BigNumber.from("1000000").mul(BigNumber.from(mintAmount))).div(
-          BigNumber.from("36000")
-        ); // calculate the number of token from USDT
-        setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
-        setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
-      }
-    } else {
-      inputRef.current.value = inputState;
-    }
-  };
+
   const IsNotConnectedToPolygon = () => {
     return (
       <>
         <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center"></div>
         <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
           <div className="flex flex-col space-y-4 items-center justify-center ">
-            <Lock />
+            {/* <Lock /> */}
+            <div className="text-grad1 " style={{ fontSize: " 100px" }}>
+              <i className="fi fi-rr-lock"></i>
+            </div>
             <button
               onClick={async () => {
                 try {
@@ -603,7 +579,7 @@ export default function BuySection(props: {
                 }
               }}
               disabled={isWeb3EnableLoading}
-              className="btn-grad-1 px-4"
+              className="btn-grad-1 px-4 -translate-y-8"
             >
               <i className="fi fi-sr-wallet"></i> Switch Network
             </button>
@@ -632,6 +608,39 @@ export default function BuySection(props: {
   const convertYPREDAllocatedTokentoNumber = () => {
     return BigNumber.from(userNumberOfTokens).div(BigNumber.from("1000000000000000000")).toString();
   };
+    //* function for USDT selection
+    const handleInputChange = event => {
+      const re = /^[0-9\b]+$/;
+      if (event.target.value === "") {
+        setShowMinimumMessage(false);
+        setInputState(parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest);
+      } else if (re.test(event.target.value)) {
+        // if he enter a number
+        // if the number is less than min amount to invest
+        if (parseFloat(event.target.value) > parseFloat(minAmountToInvest)) {
+          setShowMinimumMessage(false); // hide the message of minimum amount
+          setInputState(event.target.value); // set the input state
+          const NumberOfToken_from_USDT = BigNumber.from(
+            BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
+          ).div(BigNumber.from("36000")); // calculate the number of token from USDT
+          setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
+          setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
+        } else {
+          setShowMinimumMessage(true); // show the message of minimum amount
+          let mintAmount = minAmountToInvest; // this will reserved to check if amount is minAmount less than 1
+          if (parseFloat(minAmountToInvest) < 1) mintAmount = "1";
+          inputRef.current.value = mintAmount;
+          setInputState(mintAmount); // set the input state
+          const NumberOfToken_from_USDT = BigNumber.from(BigNumber.from("1000000").mul(BigNumber.from(mintAmount))).div(
+            BigNumber.from("36000")
+          ); // calculate the number of token from USDT
+          setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
+          setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
+        }
+      } else {
+        inputRef.current.value = inputState;
+      }
+    };
   console.log("Input value : ", inputState);
   console.log("Token To buy, by typed USDT value : ", tokenAmount_By_USDT);
 
@@ -703,7 +712,7 @@ export default function BuySection(props: {
                 placeholder="please input amount of USDT"
               />
               {/* input for Mobile */}
-               <input
+              <input
                 ref={inputRef}
                 onChange={handleInputChange}
                 // defaultValue={0}

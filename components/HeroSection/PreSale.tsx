@@ -108,37 +108,18 @@ export default function PreSale() {
         <div className="absolute w-full h-full bg-white opacity-80 flex justify-center items-center"></div>
         <div className="absolute w-full h-full bg-transparent flex justify-center items-center">
           <div className="flex flex-col space-y-4 items-center justify-center ">
-            <Lock />
-            <button
-              // onClick={async () => await connectButton()}
-              // disabled={isWeb3EnableLoading}
-              className="btn-grad-1 px-4"
+            {/* <Lock /> */}
+            <div className="text-grad1 " style={{ fontSize: " 100px" }}>
+              <i className="fi fi-rr-lock"></i>
+            </div>
+            {/* <button
+              onClick={async () => await connectButton()}
+              disabled={isWeb3EnableLoading}
+              className="btn-grad-1 px-4 -translate-y-8"
             >
               <i className="fi fi-sr-wallet"></i> Connect Wallet
-            </button>
+            </button> */}
 
-            {/* <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
-            Click
-            </button>
-            <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
-            <span className="">Development Testing</span>
-            <span className="">-------------------</span>
-            <span className="">
-            connected status :{" "}
-            {account ? (
-              <div className="flex flex-col spacey-y-2">
-              <span className="text-green-400">
-              {account.slice(0, 6)}...{account.slice(account.length - 4)}
-              </span>
-              <span className="">
-              Chain : <span className="text-green-400">{parseInt(chain.chainId)}</span>{" "}
-              </span>
-              </div>
-              ) : (
-                <span className="text-red-400">Not Connected</span>
-                )}
-                </span>
-              </div> */}
           </div>
         </div>
       </>
@@ -216,13 +197,13 @@ export default function PreSale() {
       </div>
       <div className="row">
         <div className="col-md-12 text-center">
-          <span className="private-on text-primary">$104,000</span>/
+          <span className="private-on text-primary">$0</span>/
           <span className="private-total text-primary fw-semibold">$300,000</span>
           <div className="progress">
             <div
               className="progress-bar progress-bar-striped progress-bar-animated bg-primary"
               role="progressbar"
-              style={{ width: "77%" }}
+              style={{ width: "0%" }}
               aria-valuenow={25}
               aria-valuemin={0}
               aria-valuemax={100}
@@ -243,18 +224,18 @@ export default function PreSale() {
         <ISNotConnected />
         <div className="row" style={{ marginTop: " 20px" }}>
           <div className=" col-6 text-center">
-            <p className="text-dark2 text-box-sub-title"> Private Sale Price</p>
+            <p className="text-dark2 text-box-sub-title"> Pre Sale Price</p>
             <p className="text-box-content">
               {/* {"$"}
               {ypresUSDT_price_PerToekn
                 ? convertPriceTokenBigNumberToUSDT_Tofixed_3(ypresUSDT_price_PerToekn)
                 : "0.036"} */}
-                $0.036
+                $0.037
             </p>
           </div>
           <div className=" col-6 text-center">
-            <p className="text-dark2 text-box-sub-title "> Private Sale Goal</p>
-            <p className="text-box-content"> $72,000</p>
+            <p className="text-dark2 text-box-sub-title "> Pre Sale Goal</p>
+            <p className="text-box-content"> $300,000</p>
           </div>
         </div>
         <div className="row" style={{ marginTop: " 20px" }}>
@@ -264,7 +245,7 @@ export default function PreSale() {
           </div>
           <div className=" col-6 text-center">
             <p className="text-dark2 text-box-sub-title"> ROI at Listing</p>
-            <p className="text-box-content">25%</p>
+            <p className="text-box-content">20%</p>
           </div>
         </div>
           <div className="w-full flex flex-row space-x-4 justify-center mt-4 mb-4">

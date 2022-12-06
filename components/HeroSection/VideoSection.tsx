@@ -24,7 +24,8 @@ export default function VideoSection() {
           fontWeight: "100",
         }}
       >
-        <img src="img/layout/quote-shape3.png" style={{ width: "10px" }} alt="" />
+        {/* <img src="img/layout/quote-shape3.png" style={{ width: "10px" }} alt="" /> */}
+
         Enabling everyday trader shorlist & trade coins like a <span className="fw-bold text-grad1">quant</span>.{" "}
         <span className="fw-bold text-grad1">Trading and investment research tools</span> that utilize state-of-art data
         analytics.
