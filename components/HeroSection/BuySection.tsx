@@ -693,13 +693,23 @@ export default function BuySection(props: {
               />
             </svg>
             <div className="flex flex-col font-normal">
+              {/* input for Desktop */}
               <input
                 ref={inputRef}
                 onChange={handleInputChange}
                 // defaultValue={0}
                 type="number"
-                className="border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
+                className="hidden sm:block border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
                 placeholder="please input amount of USDT"
+              />
+              {/* input for Mobile */}
+               <input
+                ref={inputRef}
+                onChange={handleInputChange}
+                // defaultValue={0}
+                type="number"
+                className="block sm:hidden border-b-[1px] border-black outline-0 w-28 h-10 text-center font-semibold placeholder-gray-500"
+                placeholder="USDT - amount"
               />
               {showMinimumMessage ? (
                 <span className="text-xs">

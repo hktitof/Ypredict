@@ -139,7 +139,7 @@ export default function PrivateSale(props: {
           </div>
         </div>
         <div className="col-sm-6 col-md-4">
-          <h2 className="card-text text-center text-dark2 text-4xl font-semibold">Invest</h2>
+          <h2 className="card-text text-center text-dark2 text-2xl sm:text-4xl font-semibold">Invest</h2>
           <br />
         </div>
         <div className="col-sm-3 col-md-4 text-end pt-4 pr-10">
@@ -201,22 +201,16 @@ export default function PrivateSale(props: {
         setShowBuyTokenModal={props.setShowBuyTokenModal}
       />
 
-      <div className="row align-items-center" style={{ backgroundColor: "#f7f7f7", marginTop: "10px" }}>
-        <div className="col-md-12 pt-4">
-          <h5 className="text-center text-grad1">Sale ending in </h5>
-        </div>
-        <div className="col-md-12 text-center" style={{ marginBottom: " 20px" }}>
-          <span className="fw-semibold text-grad1" style={{ fontSize: " 40px" }} id="clock"></span>
-        </div>
-      </div>
-      <div className="w-full flex justify-center items-center pb-8" style={{ backgroundColor: "#f7f7f7" }}>
+      <div className="w-full flex justify-center items-center mt-4 py-4" style={{ backgroundColor: "#f7f7f7" }}>
         {/* <span className="font-semibold text-4xl text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500">
                         {" "}
                         12 days
                     </span> */}
         {timeRemaining ? (
-          <CountDown timeRemaining={timeRemaining} />
-        ) : (
+          <div className="w-full flex flex-col space-y-3 justify-center items-center">
+              <h5 className="text-center text-grad1">Sale starting in</h5>
+              <CountDown timeRemaining={timeRemaining} />
+            </div>        ) : (
           <div className="flex justify-center items-center">
             <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full" role="status">
               <span className="visually-hidden">Loading...</span>
