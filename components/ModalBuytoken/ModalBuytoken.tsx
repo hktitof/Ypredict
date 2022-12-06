@@ -46,7 +46,7 @@ const Step_3_success = () => {
   return (
     <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
       <span className="text-xl">Step 3 : Transaction Confirmed</span>
-      <span className="text-center">You have been successfully bought YPRED Token</span>
+      <span className="text-center">You have been successfully YPRED Token</span>
     </div>
   );
 };
@@ -82,7 +82,7 @@ export default function ModalBuytoken(props: { stepsStatus; setStepsStatus; show
     return (
       <div className="flex flex-col space-y-4 justify-center items-center py-8 ">
         <span className="text-center text-lg sm:text-xl">Step 1 : Approving USDT transaction</span>
-        <span className="text-center">Please Approve the transaction in your wallet.</span>
+        <span className="text-center">Please Approve the transaction in your wallet</span>
         <span className="">
           Waiting...<span ref={secondsRef}>{seconds.current}</span> sec
         </span>

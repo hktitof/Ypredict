@@ -8,7 +8,7 @@ import Lock from "./icon/Lock";
 const getFormatDateTime = seconds => {
   const formatDateTime = time => {
     time = Number(time);
-    if (time < 1) return "Finished!";
+    if (time < 1) return "Finished! Refresh the page";
     const d = Math.floor(time / (3600 * 24));
     const h = Math.floor((time % (3600 * 24)) / 3600);
     const m = Math.floor((time % 3600) / 60);
