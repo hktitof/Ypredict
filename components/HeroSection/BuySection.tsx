@@ -368,6 +368,7 @@ export default function BuySection(props: {
                   setYpredAmountToBuy("0"); // reset the amount to buy
                   setTokenAmount_By_USDT("0"); // state for display next to input, reset the amount to buy
                   inputRef.current.value = ""; // reset the input value
+                  setInputState("0");
                   setUserNumberOfTokens(
                     BigNumber.from(allocatedToken_After.split(".")[0]).mul(BigNumber.from("1000000000000000000"))
                   );
@@ -408,6 +409,23 @@ export default function BuySection(props: {
   const clickTestButton = async () => {
     console.log("Buy Button Clicked!");
     butButtonRef.current.disabled = true; // disable buy token button
+    inputRef.current.value.replace(" ", "") === "";
+    if (inputRef.current.value === "") {
+      console.log("Input is Empty!!!!!");
+      butButtonRef.current.disabled = false;
+      console.log("buy Button Enabled");
+      toast.error("Please enter a value");
+      return;
+    }
+    console.log("clicked button, minimum Amount : ", minAmountToInvest);
+    //* test if the user typed minimum amount of tokens to buy
+    if (parseFloat(inputRef.current.value.toString()) < parseFloat(minAmountToInvest.toString())) {
+      butButtonRef.current.disabled = false;
+      console.log("buy Button Enabled");
+      toast.error("Minimum Amount is " + minAmountToInvest);
+      butButtonRef.current.disabled = false;
+      return;
+    }
     const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
       .mul(BigNumber.from(ypresUSDT_price_PerToekn))
       .toString();
@@ -558,7 +576,6 @@ export default function BuySection(props: {
     );
   };
 
-
   const IsNotConnectedToPolygon = () => {
     return (
       <>
@@ -608,39 +625,59 @@ export default function BuySection(props: {
   const convertYPREDAllocatedTokentoNumber = () => {
     return BigNumber.from(userNumberOfTokens).div(BigNumber.from("1000000000000000000")).toString();
   };
-    //* function for USDT selection
-    const handleInputChange = event => {
-      const re = /^[0-9\b]+$/;
-      if (event.target.value === "") {
-        setShowMinimumMessage(false);
-        setInputState(parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest);
-      } else if (re.test(event.target.value)) {
-        // if he enter a number
-        // if the number is less than min amount to invest
-        if (parseFloat(event.target.value) > parseFloat(minAmountToInvest)) {
-          setShowMinimumMessage(false); // hide the message of minimum amount
-          setInputState(event.target.value); // set the input state
-          const NumberOfToken_from_USDT = BigNumber.from(
-            BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
-          ).div(BigNumber.from("36000")); // calculate the number of token from USDT
-          setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
-          setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
-        } else {
-          setShowMinimumMessage(true); // show the message of minimum amount
-          let mintAmount = minAmountToInvest; // this will reserved to check if amount is minAmount less than 1
-          if (parseFloat(minAmountToInvest) < 1) mintAmount = "1";
-          inputRef.current.value = mintAmount;
-          setInputState(mintAmount); // set the input state
-          const NumberOfToken_from_USDT = BigNumber.from(BigNumber.from("1000000").mul(BigNumber.from(mintAmount))).div(
-            BigNumber.from("36000")
-          ); // calculate the number of token from USDT
-          setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
-          setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
-        }
+
+  const checkButton = () => {
+    console.log("inputState : ", inputState);
+    console.log("inputRef value : ", inputRef.current.value);
+    console.log("minAmountToInvest : ", minAmountToInvest);
+  };
+
+  //* function for USDT selection
+  const handleInputChange = event => {
+    if(event.target.value === ""){
+      inputRef.current.value = "";
+    }
+    //* this will remove "0" from the beginning of the input
+    let inputValue = event.target.value;
+    for (let i = 0; i < event.target.value.length; i++) {
+      if (event.target.value[i] === "0") {
+        inputValue = event.target.value.slice(1, event.target.value.length);
       } else {
-        inputRef.current.value = inputState;
+        break;
       }
-    };
+    }
+    event.target.value = inputValue;
+    const re = /^[0-9\b]+$/;
+    // if (event.target.value === "") {
+    //   setShowMinimumMessage(false);
+    //   setInputState(parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest);
+    // } else
+    if (re.test(event.target.value)) {
+      // if he enter a number
+      // if the number is less than min amount to invest
+      if (parseFloat(event.target.value.toString()) >= parseFloat(minAmountToInvest)) {
+        inputRef.current.value = event.target.value;
+        setShowMinimumMessage(false); // hide the message of minimum amount
+        setInputState(event.target.value); // set the input state
+        const NumberOfToken_from_USDT = BigNumber.from(
+          BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
+        ).div(BigNumber.from("36000")); // calculate the number of token from USDT
+        setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
+        setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
+      } else {
+        setShowMinimumMessage(true); // show the message of minimum amount
+        setInputState(event.target.value); // set the input state
+        inputRef.current.value = event.target.value;
+        let mintAmount = minAmountToInvest; // this will reserved to check if amount is minAmount less than 1
+        if (parseFloat(minAmountToInvest) < 1) mintAmount = "1";
+        const NumberOfToken_from_USDT = BigNumber.from(BigNumber.from("1000000").mul(BigNumber.from(mintAmount))).div(
+          BigNumber.from("36000")
+        ); // calculate the number of token from USDT
+        setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
+        setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
+      }
+    }
+  };
   console.log("Input value : ", inputState);
   console.log("Token To buy, by typed USDT value : ", tokenAmount_By_USDT);
 
@@ -704,12 +741,17 @@ export default function BuySection(props: {
             <div className="flex flex-col font-normal">
               {/* input for Desktop */}
               <input
+                onKeyDown={e => {
+
+                  ["e", "E", "+", "-", ",", "."].includes(e.key) && e.preventDefault();
+                }}
                 ref={inputRef}
                 onChange={handleInputChange}
                 // defaultValue={0}
                 type="number"
                 className="hidden sm:block border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
                 placeholder="please input amount of USDT"
+                min={parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest}
               />
               {/* input for Mobile */}
               <input
@@ -719,6 +761,7 @@ export default function BuySection(props: {
                 type="number"
                 className="block sm:hidden border-b-[1px] border-black outline-0 w-28 h-10 text-center font-semibold placeholder-gray-500"
                 placeholder="USDT - amount"
+                min={parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest}
               />
               {showMinimumMessage ? (
                 <span className="text-xs">
@@ -754,6 +797,9 @@ export default function BuySection(props: {
               <i className="fi fi-sr-interrogation"></i> Need Help
             </button>
           </div>
+          <button onClick={checkButton} className="py-4 px-8 bg-red-200">
+            Test
+          </button>
         </div>
       </div>
     </>
