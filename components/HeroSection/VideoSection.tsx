@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 /* eslint-disable @next/next/no-img-element */
 export default function VideoSection() {
   const [isGifShown, setIsGifShown] = React.useState(true);
-  const videoRef= React.useRef<HTMLVideoElement>(null);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  useEffect(()=>{
+    if(videoRef.current){
+      videoRef.current.addEventListener('play',()=>{
+        setIsGifShown(false)
+      })
+      videoRef.current.addEventListener('pause',()=>{
+        setIsGifShown(true)
+      })
+    }
+  },[])
   return (
     <div className="col-md-6" style={{ marginRight: "-10px" }}>
       <div className="row">
@@ -34,7 +44,16 @@ export default function VideoSection() {
               </div>
             )}
 
-            <video ref={videoRef} className="w-full" controls>
+            <video
+              onClick={() => {
+                if (!videoRef.current.paused) {
+                  setIsGifShown(true);
+                }
+              }}
+              ref={videoRef}
+              className="w-full"
+              controls
+            >
               <source src="img/ypred_promo.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>

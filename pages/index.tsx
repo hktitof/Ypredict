@@ -87,7 +87,7 @@ export default function Home() {
           }}
         />
         <Header />
-        {/* <HeroSection
+        <HeroSection
           setShowModal={setShowModal}
           showModal={showModal}
           showBuyTokenModal={showBuyTokenModal}
@@ -105,7 +105,7 @@ export default function Home() {
         <VestingSchedule />
         <RoadMap />
         <FrequentlyAskedQuestions />
-        <InterestedVestingNotification /> */}
+        <InterestedVestingNotification />
         <Footer2/>
         {/* <Footer /> */}
       </div>

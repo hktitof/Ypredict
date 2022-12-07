@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-scroll";
 /* eslint-disable @next/next/no-img-element */
 export default function Footer2() {
   return (
@@ -20,7 +21,9 @@ export default function Footer2() {
           <div className="flex flex-col  text-sm md:text-lg">
             <span className="mb-4 text-white">Platform</span>
             <div className="flex flex-col text-gray-400 space-y-2">
-              <span className="bg-blue">Home</span>
+              <Link to="HeroSection" spy={true} smooth={true} offset={-150} duration={500}>
+                <span className="bg-blue hover:cursor-pointer hover:underline">Home</span>
+              </Link>
               <span className="">App Beta Access</span>
               <span className="">Token</span>
               <span className="">Dapp</span>
@@ -55,7 +58,9 @@ export default function Footer2() {
             <span className="mb-4 text-white">Help</span>
             <div className="flex flex-col text-gray-400 space-y-2">
               <span className="bg-blue">Email</span>
-              <span className="">FAQ</span>
+              <Link to="faq" spy={true} smooth={true} offset={-150} duration={500}>
+                <span className="bg-blue hover:cursor-pointer hover:underline">FAQ</span>
+              </Link>
               <span className="">Education</span>
             </div>
           </div>
