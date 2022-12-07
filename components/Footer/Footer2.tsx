@@ -2,7 +2,7 @@ import React from "react";
 /* eslint-disable @next/next/no-img-element */
 export default function Footer2() {
   return (
-    <div className="w-full bg-footerBackground flex flex-col space-y-12 pt-16 pb-8 px-4 md:px-12 lg:px-20 xl:px-44">
+    <div className="w-full bg-footerBackground flex flex-col space-y-12 pt-16 pb-8 px-4 md:px-14 lg:px-28 xl:px-44">
       <div className="w-full md:flex md:flex-row md:justify-between lg:text-xl  grid grid-cols-2 sm:gap-x-8 gap-y-8">
         <div className="flex flex-col space-y-4">
           <div className="flex flex-row space-x-2 md:space-x-6 items-center">
