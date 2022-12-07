@@ -524,7 +524,12 @@ export default function BuySection(props: {
             <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
               <span className="text-green-700">You&apos;re not allowlisted for private sale</span>
               <button
-                onClick={(()=> window.open("https://docs.google.com/forms/d/e/1FAIpQLSdYSC0xnfPZ32ngwHH9TLG964_v9ve_l8MJgpENWdxRF0r5Nw/viewform", "_blank"))}
+                onClick={() =>
+                  window.open(
+                    "https://docs.google.com/forms/d/e/1FAIpQLSdYSC0xnfPZ32ngwHH9TLG964_v9ve_l8MJgpENWdxRF0r5Nw/viewform",
+                    "_blank"
+                  )
+                }
                 className="px-3  py-2 rounded bg-green-700 text-white text-md"
                 style={{ fontSize: "12px" }}
                 type="button"
@@ -541,13 +546,7 @@ export default function BuySection(props: {
             <div className="text-grad1 " style={{ fontSize: " 100px" }}>
               <i className="fi fi-rr-lock"></i>
             </div>
-            {/* <button
-              onClick={async () => await connectButton()}
-              disabled={isWeb3EnableLoading}
-              className="btn-grad-1 px-4"
-            >
-              <i className="fi fi-sr-wallet"></i> Connect Wallet
-            </button> */}
+
           </div>
         </div>
       </>
@@ -620,10 +619,7 @@ export default function BuySection(props: {
     }
     event.target.value = inputValue;
     const re = /^[0-9\b]+$/;
-    // if (event.target.value === "") {
-    //   setShowMinimumMessage(false);
-    //   setInputState(parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest);
-    // } else
+
     if (re.test(event.target.value)) {
       // if he enter a number
       // if the number is less than min amount to invest
@@ -711,20 +707,6 @@ export default function BuySection(props: {
               />
             </svg>
             <div className="flex flex-col font-normal">
-              {/* input for Desktop */}
-              {/* <input
-                onKeyDown={e => {
-                  ["e", "E", "+", "-", ",", "."].includes(e.key) && e.preventDefault();
-                }}
-                ref={inputRef}
-                onChange={handleInputChange}
-                // defaultValue={0}
-                type="number"
-                className="hidden sm:block border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
-                placeholder="please input amount of USDT"
-                min={parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest}
-              /> */}
-              {/* input for Mobile */}
               <input
                 ref={inputRef}
                 onKeyDown={e => {
@@ -771,10 +753,6 @@ export default function BuySection(props: {
               <i className="fi fi-sr-interrogation"></i> Need Help
             </button>
           </div>
-          <button onClick={()=>{
-            console.log("Click on Test Button inputRef : ",inputRef.current.value)
-            console.log("Click on Test Button inputState: ",inputState)
-          }} className="py-4 px-8 bg-red-400">test</button>
         </div>
       </div>
     </>

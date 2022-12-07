@@ -53,49 +53,6 @@ export default function VideoSection() {
             <source src="img/ypred_promo.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-
-          <div className="relative">
-            {/* <div className="absolute z-10 w-full h-full ">
-              <div className="token-info-image footer-info-image desktop">
-                <div className="token-info-image-div">
-                  <img src="img/play-solid.svg" className="video-play-footer-image" alt="promo_video.gif" />
-                </div>
-                <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif" />
-              </div>
-            </div> */}
-            {/* {isGifShown && (
-              <div
-                onClick={() => {
-                  setIsGifShown(false);
-                  videoRef.current.play();
-                }}
-                className="absolute  w-full h-full hover:cursor-pointer"
-              >
-                <div className="relative w-full h-full">
-                  <div className="absolute w-full h-full flex justify-center items-center bg-white opacity-20"></div>
-                  <div className="absolute  w-full h-full flex justify-center items-center ">
-                    <img src="img/play-solid.svg" className="w-32 h-12 opacity-100 z-20" alt="promo_video.gif" />
-                  </div>
-                  <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif" />
-                </div>
-              </div>
-            )}
-
-            <video
-              onClick={() => {
-                if (videoRef.current.played) {
-                  setIsGifShown(true);
-                  videoRef.current.pause();
-                }
-              }}
-              ref={videoRef}
-              className={`w-full hover:cur ${isGifShown ? "hidden" : ""}}`}
-              controls={isGifShown?false:true}
-            >
-              <source src="img/ypred_promo.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video> */}
-          </div>
         </div>
       </div>
 
