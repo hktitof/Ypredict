@@ -148,7 +148,7 @@ export default function BuySection(props: {
         if (parseInt(minAmountToInvest) == 0) {
           minAmountToInvest = (parseFloat(message3.toString()) / parseFloat("1000000")).toFixed(3);
         }
-        setMinAmountToInvest(minAmountToInvest);
+        setMinAmountToInvest((parseFloat(minAmountToInvest) + 1).toString());
       };
       getYPRED_Price_Per_tokene();
     }
@@ -626,15 +626,9 @@ export default function BuySection(props: {
     return BigNumber.from(userNumberOfTokens).div(BigNumber.from("1000000000000000000")).toString();
   };
 
-  const checkButton = () => {
-    console.log("inputState : ", inputState);
-    console.log("inputRef value : ", inputRef.current.value);
-    console.log("minAmountToInvest : ", minAmountToInvest);
-  };
-
   //* function for USDT selection
   const handleInputChange = event => {
-    if(event.target.value === ""){
+    if (event.target.value === "") {
       inputRef.current.value = "";
     }
     //* this will remove "0" from the beginning of the input
@@ -742,7 +736,6 @@ export default function BuySection(props: {
               {/* input for Desktop */}
               <input
                 onKeyDown={e => {
-
                   ["e", "E", "+", "-", ",", "."].includes(e.key) && e.preventDefault();
                 }}
                 ref={inputRef}
@@ -797,9 +790,6 @@ export default function BuySection(props: {
               <i className="fi fi-sr-interrogation"></i> Need Help
             </button>
           </div>
-          <button onClick={checkButton} className="py-4 px-8 bg-red-200">
-            Test
-          </button>
         </div>
       </div>
     </>
