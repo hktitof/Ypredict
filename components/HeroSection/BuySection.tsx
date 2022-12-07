@@ -712,7 +712,7 @@ export default function BuySection(props: {
             </svg>
             <div className="flex flex-col font-normal">
               {/* input for Desktop */}
-              <input
+              {/* <input
                 onKeyDown={e => {
                   ["e", "E", "+", "-", ",", "."].includes(e.key) && e.preventDefault();
                 }}
@@ -723,14 +723,17 @@ export default function BuySection(props: {
                 className="hidden sm:block border-b-[1px] border-black outline-0 w-48 h-10 text-center font-semibold placeholder-gray-500"
                 placeholder="please input amount of USDT"
                 min={parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest}
-              />
+              /> */}
               {/* input for Mobile */}
               <input
                 ref={inputRef}
+                onKeyDown={e => {
+                  ["e", "E", "+", "-", ",", "."].includes(e.key) && e.preventDefault();
+                }}
                 onChange={handleInputChange}
                 // defaultValue={0}
                 type="number"
-                className="block sm:hidden border-b-[1px] border-black outline-0 w-28 h-10 text-center font-semibold placeholder-gray-500"
+                className=" border-b-[1px] border-black outline-0 w-28 sm:w-48 h-10 text-center font-semibold placeholder-gray-500"
                 placeholder="USDT - amount"
                 min={parseFloat(minAmountToInvest) < 1 ? "1" : minAmountToInvest}
               />
@@ -768,6 +771,10 @@ export default function BuySection(props: {
               <i className="fi fi-sr-interrogation"></i> Need Help
             </button>
           </div>
+          <button onClick={()=>{
+            console.log("Click on Test Button inputRef : ",inputRef.current.value)
+            console.log("Click on Test Button inputState: ",inputState)
+          }} className="py-4 px-8 bg-red-400">test</button>
         </div>
       </div>
     </>
