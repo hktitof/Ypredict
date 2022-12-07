@@ -1,4 +1,6 @@
 import React from "react";
+import Tooltip from "@mui/material/Tooltip";
+
 /* eslint-disable @next/next/no-img-element */
 export default function PublicSale() {
   const ISNotConnected = () => {
@@ -26,7 +28,7 @@ export default function PublicSale() {
   return (
     <div className="" id="public" role="tabpanel" aria-labelledby="deals-tab">
       <div className="row">
-        <div className="col-sm-3 col-md-4">
+      <div className="col-sm-3 col-md-4">
           <div className="dropdown">
             <button
               className="btn dropdown-toggle flex items-center"
@@ -45,21 +47,21 @@ export default function PublicSale() {
               <li>
                 <div className="dropdown-divider"></div>
               </li>
-              <li className="flex items-center hover:cursor-pointer">
-                <img src="/bsc.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
-                Binance USDT
-              </li>
+              <Tooltip title="Coming soon">
+                <li className="flex items-center hover:cursor-help">
+                  <img src="/bsc.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
+                  Binance USDT
+                </li>
+              </Tooltip>
               <li>
                 <div className="dropdown-divider"></div>
               </li>
-              <li className="flex items-center hover:cursor-pointer">
-                <img
-                  src="./img/icon/eth.png"
-                  alt=""
-                  style={{ width: "30px", marginLeft: "10px", marginRight: "10px" }}
-                />
+              <Tooltip title="Coming soon">
+                <li className="flex items-center hover:cursor-help">
+                  <img src="./img/icon/eth.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
                 Ethereum USDT
               </li>
+              </Tooltip>
             </ul>
           </div>
         </div>

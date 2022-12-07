@@ -4,6 +4,8 @@ import { BigNumber, ethers } from "ethers";
 import { PreSaleVesting_ABI, PreSaleVesting_address } from "../../config/TestNet/PreSaleVesting";
 import { boltx } from "web3modal/dist/providers/connectors";
 import Lock from "./icon/Lock";
+import Tooltip from "@mui/material/Tooltip";
+
 
 const getFormatDateTime = seconds => {
   const formatDateTime = time => {
@@ -128,7 +130,7 @@ export default function PreSale() {
   return (
     <div className="" id="presale" role="tabpanel" aria-labelledby="deals-tab">
       <div className="row">
-        <div className="col-sm-3 col-md-4">
+      <div className="col-sm-3 col-md-4">
           <div className="dropdown">
             <button
               className="btn dropdown-toggle flex items-center"
@@ -141,47 +143,27 @@ export default function PreSale() {
             </button>
             <ul className="dropdown-menu" style={{ width: "10px", fontSize: " 10px" }}>
               <li className="flex items-center hover:cursor-pointer">
-                <img
-                  src="/polygon.png"
-                  alt=""
-                  style={{
-                    width: " 30px",
-                    marginLeft: "10px",
-                    marginRight: "10px",
-                  }}
-                />
+                <img src="/polygon.png" alt="" style={{ width: " 30px", marginLeft: "10px", marginRight: "10px" }} />
                 <span className="">Matic USDT</span>
               </li>
               <li>
                 <div className="dropdown-divider"></div>
               </li>
-              <li className="flex items-center hover:cursor-pointer">
-                <img
-                  src="/bsc.png"
-                  alt=""
-                  style={{
-                    width: "30px",
-                    marginLeft: "10px",
-                    marginRight: " 10px",
-                  }}
-                />
-                Binance USDT
-              </li>
+              <Tooltip title="Coming soon">
+                <li className="flex items-center hover:cursor-help">
+                  <img src="/bsc.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
+                  Binance USDT
+                </li>
+              </Tooltip>
               <li>
                 <div className="dropdown-divider"></div>
               </li>
-              <li className="flex items-center hover:cursor-pointer">
-                <img
-                  src="./img/icon/eth.png"
-                  alt=""
-                  style={{
-                    width: "30px",
-                    marginLeft: "10px",
-                    marginRight: "10px",
-                  }}
-                />
+              <Tooltip title="Coming soon">
+                <li className="flex items-center hover:cursor-help">
+                  <img src="./img/icon/eth.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
                 Ethereum USDT
               </li>
+              </Tooltip>
             </ul>
           </div>
         </div>

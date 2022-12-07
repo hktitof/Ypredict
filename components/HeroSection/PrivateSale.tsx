@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { BigNumber, ethers } from "ethers";
 import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
 import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
+import Tooltip from "@mui/material/Tooltip";
 /* eslint-disable @next/next/no-img-element */
 // format span to show the time left
 const getFormatDateTime = seconds => {
@@ -120,21 +121,21 @@ export default function PrivateSale(props: {
               <li>
                 <div className="dropdown-divider"></div>
               </li>
-              <li className="flex items-center hover:cursor-pointer">
-                <img src="/bsc.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
-                Binance USDT
-              </li>
+              <Tooltip title="Coming soon">
+                <li className="flex items-center hover:cursor-help">
+                  <img src="/bsc.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
+                  Binance USDT
+                </li>
+              </Tooltip>
               <li>
                 <div className="dropdown-divider"></div>
               </li>
-              <li className="flex items-center hover:cursor-pointer">
-                <img
-                  src="./img/icon/eth.png"
-                  alt=""
-                  style={{ width: "30px", marginLeft: "10px", marginRight: "10px" }}
-                />
+              <Tooltip title="Coming soon">
+                <li className="flex items-center hover:cursor-help">
+                  <img src="./img/icon/eth.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
                 Ethereum USDT
               </li>
+              </Tooltip>
             </ul>
           </div>
         </div>
@@ -208,9 +209,10 @@ export default function PrivateSale(props: {
                     </span> */}
         {timeRemaining ? (
           <div className="w-full flex flex-col space-y-3 justify-center items-center">
-              <h5 className="text-center text-grad1">Sale starting in</h5>
-              <CountDown timeRemaining={timeRemaining} />
-            </div>        ) : (
+            <h5 className="text-center text-grad1">Sale starting in</h5>
+            <CountDown timeRemaining={timeRemaining} />
+          </div>
+        ) : (
           <div className="flex justify-center items-center">
             <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full" role="status">
               <span className="visually-hidden">Loading...</span>

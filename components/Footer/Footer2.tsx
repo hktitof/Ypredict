@@ -3,7 +3,7 @@ import { Link } from "react-scroll";
 /* eslint-disable @next/next/no-img-element */
 export default function Footer2() {
   return (
-    <div className="w-full bg-footerBackground flex flex-col space-y-12 pt-16 pb-8 px-4 md:px-14 lg:px-28 xl:px-44">
+    <div className="w-full bg-footerBackground flex flex-col space-y-12 pt-16 pb-8 px-8 sm:px-12 md:px-16 lg:px-28 xl:px-44">
       <div className="w-full md:flex md:flex-row md:justify-between lg:text-xl  grid grid-cols-2 sm:gap-x-8 gap-y-8">
         <div className="flex flex-col space-y-4">
           <div className="flex flex-row space-x-2 md:space-x-6 items-center">
@@ -21,8 +21,8 @@ export default function Footer2() {
           <div className="flex flex-col  text-sm md:text-lg">
             <span className="mb-4 text-white">Platform</span>
             <div className="flex flex-col text-gray-400 space-y-2">
-              <Link to="HeroSection" spy={true} smooth={true} offset={-150} duration={500}>
-                <span className="bg-blue hover:cursor-pointer hover:underline">Home</span>
+              <Link to="HeroSection" spy={true} smooth={true} offset={-150} duration={2000}>
+                <span className="hover:cursor-pointer hover:underline">Home</span>
               </Link>
               <span className="">App Beta Access</span>
               <span className="">Token</span>
@@ -35,7 +35,7 @@ export default function Footer2() {
           <div className="flex flex-col text-gray-400 space-y-2">
             <span
               onClick={() => window.open("https://twitter.com/ypredict_ai", "_blank")}
-              className="bg-blue hover:cursor-pointer hover:underline"
+              className="hover:cursor-pointer hover:underline"
             >
               Twitter
             </span>
@@ -47,7 +47,7 @@ export default function Footer2() {
             </span>
             <span
               onClick={() => window.open("https://www.youtube.com/channel/UCt2WjHoVuXHi_mhTYzlrsvw", "_blank")}
-              className="bg-blue hover:cursor-pointer hover:underline"
+              className="hover:cursor-pointer hover:underline"
             >
               Youtube
             </span>
@@ -59,7 +59,7 @@ export default function Footer2() {
             <div className="flex flex-col text-gray-400 space-y-2">
               <span className="bg-blue">Email</span>
               <Link to="faq" spy={true} smooth={true} offset={-150} duration={500}>
-                <span className="bg-blue hover:cursor-pointer hover:underline">FAQ</span>
+                <span className="hover:cursor-pointer hover:underline">FAQ</span>
               </Link>
               <span className="">Education</span>
             </div>
