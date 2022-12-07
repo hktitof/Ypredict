@@ -23,6 +23,7 @@
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.0",
     "react-moralis": "^1.4.2",
+    "react-scroll": "^1.8.8",
     "web3modal": "^1.9.10",
     "web3uikit": "^1.0.4"
   },

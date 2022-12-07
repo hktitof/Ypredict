@@ -1,11 +1,22 @@
 import React from "react";
+import { Link } from "react-scroll";
 /* eslint-disable @next/next/no-img-element */
 export default function InterestedVestingNotification() {
   if (typeof window !== "undefined") {
     $(window).on("scroll", function () {
       var y = $(this).scrollTop();
       if (y > 800) {
-        $("#investing-bottom").fadeIn();
+        
+        let documentHeight = document.body.scrollHeight;
+        let currentScroll = window.scrollY + window.innerHeight;
+        // When the user is [modifier]px from the bottom, fire the event.
+        let modifier = 200; 
+        if(currentScroll + modifier > documentHeight) {
+            console.log('You are at the bottom!')
+            $("#investing-bottom").fadeOut();
+        }else{
+          $("#investing-bottom").fadeIn();
+        }
       } else {
         $("#investing-bottom").fadeOut();
       }
@@ -15,21 +26,27 @@ export default function InterestedVestingNotification() {
   return (
     <div className="interested-in-investing-section " id="investing-bottom">
       {/* Added by titof from here */}
-      <div className="w-full h-full flex justify-center md:justify-between items-center px-4">
-        <div className="hidden md:block z-10 w-32 hover:cursor-pointer">
-          <div className="relative w-full h-full">
-            <div className="absolute z-10 w-full h-full flex justify-center items-center bg-white opacity-20"></div>
-            <div className="absolute z-10 w-full h-full flex justify-center items-center ">
-              <img src="img/play-solid.svg" className="w-4 h-4 opacity-100 z-20" alt="promo_video.gif" />
+      <div className="w-full h-full flex justify-between items-center px-4">
+        <Link to="HeroSection" spy={true} smooth={true} offset={-150} duration={500}>
+          <div className="hidden md:block z-10 w-32 hover:cursor-pointer">
+            <div className="relative w-full h-full">
+              <div className="absolute z-10 w-full h-full flex justify-center items-center bg-white opacity-20"></div>
+              <div className="absolute z-10 w-full h-full flex justify-center items-center ">
+                <img src="img/play-solid.svg" className="w-4 h-4 opacity-100 z-20" alt="promo_video.gif" />
+              </div>
+              <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif" />
             </div>
-            <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif" />
           </div>
-        </div>
+        </Link>
+
         <span className=" block md:hidden md:text-xl text-white ">Interested Investing in in YPredict?</span>
 
         <div className="flex flex-row md:space-x-8 items-center">
-          <div className="hidden md:block text-xl text-white ">Interested Investing in in YPredict?</div>
-          <button className="bg-white flex-none md:flex  flex-col justify-center items-center px-8 sm:px-12 py-1 sm:py-2 rounded-xl">
+          <div className="hidden md:block text-xl md:text-3xl text-white ">Interested Investing in in YPredict?</div>
+          <button
+            onClick={() => window.open("https://forms.gle/UWbAcqe2AyorWeAM9", "_blank")}
+            className="bg-white flex-none md:flex  flex-col justify-center items-center px-8 sm:px-12 py-1 sm:py-2 rounded-xl"
+          >
             <div className="font-semibold lg:text-2xl text-blue-700">Apply Now!</div>
             <div className="flex flex-row space-x-1 items-center">
               <div className="w-[12px] h-[12px] rounded-full bg-green-600"></div>

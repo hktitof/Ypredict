@@ -9,6 +9,7 @@ import { BigNumber, ethers } from "ethers";
 import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
 import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
 import PrivateSale from "./PrivateSale";
+import {Link} from "react-scroll";
 
 // format span to show the time left
 const getFormatDateTime = seconds => {
@@ -107,7 +108,7 @@ export default function HeroSection(props: {
   }, []);
 
   return (
-    <div className="hero-section">
+    <div id="HeroSection" className="hero-section">
       {/* Title */}
       <div className="hero-title">
         <span className="empower">YPRED</span>, a token that <span className="empower">empowers</span> world&apos;s most

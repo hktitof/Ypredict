@@ -22,6 +22,13 @@ import { Toaster } from "react-hot-toast";
 import { WalletModal, Wallet } from "web3uikit";
 import { useMoralis } from "react-moralis";
 import ModalBuytoken from "../components/ModalBuytoken/ModalBuytoken";
+import Footer2 from "../components/Footer/Footer2";
+
+
+
+
+
+
 export default function Home() {
   const [showModal, setShowModal] = useState(false);
   const [showBuyTokenModal, setShowBuyTokenModal] = useState(false);
@@ -99,8 +106,8 @@ export default function Home() {
         <RoadMap />
         <FrequentlyAskedQuestions />
         <InterestedVestingNotification />
-
-        <Footer />
+        <Footer2/>
+        {/* <Footer /> */}
       </div>
     </>
   );

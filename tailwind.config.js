@@ -7,6 +7,9 @@ module.exports = {
         "interested-in-vesting": "url('/img/interest-ypredict-img.svg')",
         // "footer-texture": "url('/img/footer-texture.png')",
       }),
+      colors: {
+        footerBackground: "#1A1753",
+      },
     },
   },
   plugins: [],
