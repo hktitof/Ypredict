@@ -510,29 +510,6 @@ export default function BuySection(props: {
             >
               <i className="fi fi-sr-wallet"></i> Connect Wallet
             </button>
-
-            {/* <button ref={testButton_Ref} onClick={async () => await clickTestButton()} className="bg-red-400 px-24 py-3">
-            Click
-            </button>
-            <div className="w-full flex flex-col justify-center items-center bg-white px-4 py-4">
-            <span className="">Development Testing</span>
-            <span className="">-------------------</span>
-            <span className="">
-            connected status :{" "}
-            {account ? (
-              <div className="flex flex-col spacey-y-2">
-              <span className="text-green-400">
-              {account.slice(0, 6)}...{account.slice(account.length - 4)}
-              </span>
-              <span className="">
-              Chain : <span className="text-green-400">{parseInt(chain.chainId)}</span>{" "}
-              </span>
-              </div>
-              ) : (
-                <span className="text-red-400">Not Connected</span>
-                )}
-                </span>
-              </div> */}
           </div>
         </div>
       </>
@@ -547,6 +524,7 @@ export default function BuySection(props: {
             <div className="flex space-x-2 justify-center items-center  " style={{ fontSize: " 13px" }}>
               <span className="text-green-700">You&apos;re not allowlisted for private sale</span>
               <button
+                onClick={(()=> window.open("https://docs.google.com/forms/d/e/1FAIpQLSdYSC0xnfPZ32ngwHH9TLG964_v9ve_l8MJgpENWdxRF0r5Nw/viewform", "_blank"))}
                 className="px-3  py-2 rounded bg-green-700 text-white text-md"
                 style={{ fontSize: "12px" }}
                 type="button"

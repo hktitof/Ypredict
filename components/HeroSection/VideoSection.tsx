@@ -32,7 +32,7 @@ export default function VideoSection() {
                   setIsGifShown(false);
                   videoRef.current.play();
                 }}
-                className="absolute z-10 w-full h-full hover:cursor-pointer"
+                className="absolute  w-full h-full hover:cursor-pointer"
               >
                 <div className="relative w-full h-full">
                   <div className="absolute z-10 w-full h-full flex justify-center items-center bg-white opacity-20"></div>
@@ -46,13 +46,14 @@ export default function VideoSection() {
 
             <video
               onClick={() => {
-                if (!videoRef.current.paused) {
+                if (videoRef.current.played) {
                   setIsGifShown(true);
+                  videoRef.current.pause();
                 }
               }}
               ref={videoRef}
-              className="w-full"
-              controls
+              className={`w-full ${isGifShown ? "hidden" : ""}}`}
+              controls={isGifShown?false:true}
             >
               <source src="img/ypred_promo.mp4" type="video/mp4" />
               Your browser does not support the video tag.

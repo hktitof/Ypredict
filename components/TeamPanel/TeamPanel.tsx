@@ -24,7 +24,7 @@ export default function TeamPanel() {
   return (
     <div className="meettheteam-section">
       <div className="meettheteam-title">
-        Meet Our 10x <span className="meettheteam-colored">team</span>
+        Meet Our 11x <span className="meettheteam-colored">team</span>
       </div>
 
       <div className="meettheteam-subtitle">
@@ -229,6 +229,25 @@ export default function TeamPanel() {
                   <img src="img/github.svg" className="profile-social-icons" alt="team member" />
                 </a>
                 <a href="https://www.linkedin.com/in/haidaralimasu">
+                  <img src="img/linkedin.svg" className="profile-social-icons" alt="team member" />
+                </a>
+                {/* <!-- <img src="img/behance.svg" className="profile-social-icons" /> --> */}
+              </div>
+            </div>
+          </div>
+          <div className="team-member developer">
+            <div className="team-image-overlay"></div>
+            <img src="img/abdellatif.png" className="team-member-img" alt="team member" />
+            <div className="team-member-info info-1">
+              <div className="team-name-and-designation">
+                <span className="team-member-name">Abdell Atif</span>
+                <span className="team-member-designation">(web3 Dev)</span>
+              </div>
+              <div className="team-member-profile flex">
+                <a href="http://www.github.com/hktitof">
+                  <img src="img/github.svg" className="profile-social-icons" alt="team member" />
+                </a>
+                <a href="https://www.linkedin.com/in/abdellatif-anaflous">
                   <img src="img/linkedin.svg" className="profile-social-icons" alt="team member" />
                 </a>
                 {/* <!-- <img src="img/behance.svg" className="profile-social-icons" /> --> */}
