@@ -633,7 +633,7 @@ export default function BuySection(props: {
         setInputState(event.target.value); // set the input state
         const NumberOfToken_from_USDT = BigNumber.from(
           BigNumber.from("1000000").mul(BigNumber.from(event.target.value))
-        ).div(BigNumber.from("36000")); // calculate the number of token from USDT
+        ).div(BigNumber.from(ypresUSDT_price_PerToekn.toString())); // calculate the number of token from USDT
         setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
         setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function
       } else {
@@ -643,7 +643,7 @@ export default function BuySection(props: {
         let mintAmount = minAmountToInvest; // this will reserved to check if amount is minAmount less than 1
         if (parseFloat(minAmountToInvest) < 1) mintAmount = "1";
         const NumberOfToken_from_USDT = BigNumber.from(BigNumber.from("1000000").mul(BigNumber.from(mintAmount))).div(
-          BigNumber.from("36000")
+          BigNumber.from(ypresUSDT_price_PerToekn.toString())
         ); // calculate the number of token from USDT
         setTokenAmount_By_USDT(NumberOfToken_from_USDT.toString()); // set the token amount by USDT
         setYpredAmountToBuy(NumberOfToken_from_USDT.toString()); // this will state that passed to buy button function

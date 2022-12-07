@@ -24,7 +24,7 @@ export default function TeamPanel() {
   return (
     <div className="meettheteam-section">
       <div className="meettheteam-title">
-        Meet Our 11x <span className="meettheteam-colored">team</span>
+        Meet Our 1x <span className="meettheteam-colored">team</span>
       </div>
 
       <div className="meettheteam-subtitle">

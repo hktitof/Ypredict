@@ -1,22 +1,59 @@
 import React, { useEffect } from "react";
 /* eslint-disable @next/next/no-img-element */
 export default function VideoSection() {
-  const [isGifShown, setIsGifShown] = React.useState(true);
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  useEffect(()=>{
-    if(videoRef.current){
-      videoRef.current.addEventListener('play',()=>{
-        setIsGifShown(false)
-      })
-      videoRef.current.addEventListener('pause',()=>{
-        setIsGifShown(true)
-      })
+  const gifRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.addEventListener("pause", () => {
+        videoRef.current.classList.add("hidden");
+        gifRef.current.classList.remove("hidden");
+        videoRef.current.controls = false;
+        videoRef.current.pause();
+      });
     }
-  },[])
+  }, []);
   return (
     <div className="col-md-6" style={{ marginRight: "-10px" }}>
       <div className="row">
-        <div className=" col-md-12 relative">
+        <div className=" col-md-12 ">
+          <div
+            ref={gifRef}
+            onClick={() => {
+              // setIsGifShown(false);
+              gifRef.current.classList.add("hidden");
+              videoRef.current.classList.remove("hidden");
+              videoRef.current.play();
+              videoRef.current.controls = true;
+            }}
+            className="  w-full h-full hover:cursor-pointer"
+          >
+            <div className="relative w-full h-full">
+              <div className="absolute w-full h-full flex justify-center items-center bg-white opacity-20"></div>
+              <div className="absolute  w-full h-full flex justify-center items-center ">
+                <img src="img/play-solid.svg" className="w-32 h-12 opacity-100 " alt="promo_video.gif" />
+              </div>
+              <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif" />
+            </div>
+          </div>
+
+          <video
+            onClick={() => {
+              if (videoRef.current.played) {
+                videoRef.current.classList.add("hidden");
+                gifRef.current.classList.remove("hidden");
+                videoRef.current.controls = false;
+                videoRef.current.pause();
+              }
+            }}
+            ref={videoRef}
+            className="w-full hidden hover:cursor-pointer"
+            controls={false}
+          >
+            <source src="img/ypred_promo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
           <div className="relative">
             {/* <div className="absolute z-10 w-full h-full ">
               <div className="token-info-image footer-info-image desktop">
@@ -26,7 +63,7 @@ export default function VideoSection() {
                 <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif" />
               </div>
             </div> */}
-            {isGifShown && (
+            {/* {isGifShown && (
               <div
                 onClick={() => {
                   setIsGifShown(false);
@@ -35,8 +72,8 @@ export default function VideoSection() {
                 className="absolute  w-full h-full hover:cursor-pointer"
               >
                 <div className="relative w-full h-full">
-                  <div className="absolute z-10 w-full h-full flex justify-center items-center bg-white opacity-20"></div>
-                  <div className="absolute z-10 w-full h-full flex justify-center items-center ">
+                  <div className="absolute w-full h-full flex justify-center items-center bg-white opacity-20"></div>
+                  <div className="absolute  w-full h-full flex justify-center items-center ">
                     <img src="img/play-solid.svg" className="w-32 h-12 opacity-100 z-20" alt="promo_video.gif" />
                   </div>
                   <img src="img/promo_video.gif" className="img-token-info" alt="promo_video.gif" />
@@ -52,12 +89,12 @@ export default function VideoSection() {
                 }
               }}
               ref={videoRef}
-              className={`w-full ${isGifShown ? "hidden" : ""}}`}
+              className={`w-full hover:cur ${isGifShown ? "hidden" : ""}}`}
               controls={isGifShown?false:true}
             >
               <source src="img/ypred_promo.mp4" type="video/mp4" />
               Your browser does not support the video tag.
-            </video>
+            </video> */}
           </div>
         </div>
       </div>
