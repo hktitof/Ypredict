@@ -1,4 +1,4 @@
-export const YPredictPrivateSale_Address = "0x94a878eBc1B0F74Dc47129bC2A30b87FDA1909a6";
+export const YPredictPrivateSale_address = "0x94a878eBc1B0F74Dc47129bC2A30b87FDA1909a6";
 export const YPredictPrivateSale_ABI = [
   {
     inputs: [

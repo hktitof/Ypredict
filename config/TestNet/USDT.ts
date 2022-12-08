@@ -1,5 +1,5 @@
-export const USDC_ContractAddress = "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747";
-export const USDC_ABI = [
+export const USDT_ContractAddress = "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747";
+export const USDT_ABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
     anonymous: false,

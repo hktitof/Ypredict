@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { BigNumber, ethers } from "ethers";
 
-import { PreSaleVesting_ABI, PreSaleVesting_address } from "../../config/TestNet/PreSaleVesting";
+import { PreSaleVesting_ABI, PreSaleVesting_address } from "../../config/Mainnet/PreSaleVesting";
 import { boltx } from "web3modal/dist/providers/connectors";
 import Lock from "./icon/Lock";
 import Tooltip from "@mui/material/Tooltip";

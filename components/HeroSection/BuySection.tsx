@@ -4,9 +4,9 @@ import { useEffect } from "react";
 import Lock from "./icon/Lock";
 import toast, { ToastBar } from "react-hot-toast";
 import { BigNumber, ethers } from "ethers";
-import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
-import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
-import { USDC_ABI, USDC_ContractAddress } from "../../config/TestNet/USDC";
+import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/Mainnet/YPredictPrivateSale";
+import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/Mainnet/PrivateSaleVesting";
+import { USDT_ABI, USDT_ContractAddress } from "../../config/Mainnet/USDT";
 import { whitelist } from "../../config/whitelist/whitelist";
 
 import { error } from "console";
@@ -439,7 +439,7 @@ export default function BuySection(props: {
     const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
       .mul(BigNumber.from(ypresUSDT_price_PerToekn))
       .toString();
-    const hasUSDT = await checkUserIfhadUSDT(USDC_ContractAddress, USDC_ABI, account, approvedValueToSpend, Moralis);
+    const hasUSDT = await checkUserIfhadUSDT(USDT_ContractAddress, USDT_ABI, account, approvedValueToSpend, Moralis);
     if (!hasUSDT) {
       butButtonRef.current.disabled = false;
       console.log("buy Button Enabled");
@@ -469,9 +469,9 @@ export default function BuySection(props: {
         .mul(BigNumber.from(ypresUSDT_price_PerToekn))
         .toString();
       const sendOptions = {
-        contractAddress: USDC_ContractAddress,
+        contractAddress: USDT_ContractAddress,
         functionName: "approve",
-        abi: USDC_ABI,
+        abi: USDT_ABI,
         params: {
           spender: YPredictPrivateSale_address,
           amount: approvedValueToSpend,
