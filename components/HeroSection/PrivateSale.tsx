@@ -3,8 +3,8 @@ import BuySection from "./BuySection";
 
 import { useEffect } from "react";
 import { BigNumber, ethers } from "ethers";
-import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/TestNet/PrivateSaleVesting";
-import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/TestNet/YPredictPrivateSale";
+import { PrivateSaleVesting_ABI, PrivateSaleVesting_Address } from "../../config/Mainnet/PrivateSaleVesting";
+import { YPredictPrivateSale_ABI, YPredictPrivateSale_address } from "../../config/Mainnet/YPredictPrivateSale";
 import Tooltip from "@mui/material/Tooltip";
 /* eslint-disable @next/next/no-img-element */
 // format span to show the time left
@@ -65,7 +65,7 @@ export default function PrivateSale(props: {
   useEffect(() => {
     // this will set the time remaining for the private sale
     const getBlockTime = async () => {
-      const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-rpc.com");
       const currentBlock = await provider.getBlockNumber();
       const blockTimestamp = (await provider.getBlock(currentBlock)).timestamp; // this is in seconds
       console.log("Block time stamp : ", blockTimestamp);
@@ -75,27 +75,32 @@ export default function PrivateSale(props: {
       console.log("End date in seconds : ", endDate_sec);
       const timeRemaining = endDate_sec - blockTimestamp;
       setTimeRemaining(timeRemaining);
+
     };
     getBlockTime();
     const getAllSoldedToken = async () => {
-      const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
+      console.log("Begin useEffect Get All Solded Token ---------" ); 
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-rpc.com");
       const contract = new ethers.Contract(YPredictPrivateSale_address, YPredictPrivateSale_ABI, provider);
       const tokenSold_BigNumber = await contract.s_tokenSold();
-      const tokenSold = BigNumber.from(tokenSold_BigNumber).div(BigNumber.from("1000000000000000000")).toNumber();
+      const tokenSold = BigNumber.from(tokenSold_BigNumber.toString()).div(BigNumber.from("1000000000000000000")).toNumber();
       const pricePerToken_BigNumber = await contract.s_usdtPrice();
       const pricePerToken = (
         parseFloat("1") /
         (parseFloat("1000000") / parseFloat(pricePerToken_BigNumber.toString()))
-      ).toFixed(3);
-      const allSoldedToken_USD_without_decimals = (
-        parseFloat(tokenSold.toString()) * parseFloat(pricePerToken.toString())
-      ).toFixed(0);
-      setVestingContract_All_SoldedToken_USDT(tokenSold);
-      setVestingContract_All_SoldedToken_USDT(Number(allSoldedToken_USD_without_decimals));
-      console.log("Price per token Big Number ", pricePerToken_BigNumber.toString());
-      console.log("Price per token : ", pricePerToken);
-      console.log("All solded token : ", allSoldedToken_USD_without_decimals);
-      console.log("Token sold : ", tokenSold);
+        ).toFixed(3);
+        const allSoldedToken_USD_without_decimals = (
+          parseFloat(tokenSold.toString()) * parseFloat(pricePerToken.toString())
+          ).toFixed(0);
+          console.log(" check this one --------- ",allSoldedToken_USD_without_decimals)
+          setVestingContract_All_SoldedToken_USDT(tokenSold);
+          console.log("this is what will be set in the state : ",Number(allSoldedToken_USD_without_decimals))
+          setVestingContract_All_SoldedToken_USDT(Number(allSoldedToken_USD_without_decimals));
+          console.log("Price per token Big Number ", pricePerToken_BigNumber.toString());
+          console.log("Price per token : ", pricePerToken);
+          console.log("All solded token : ", allSoldedToken_USD_without_decimals);
+          console.log("Token sold : ", tokenSold);
+          console.log("End useEffect Get All Solded Token ---------" ); 
     };
     getAllSoldedToken();
   }, []);
@@ -160,7 +165,7 @@ export default function PrivateSale(props: {
           <div className="flex justify-center py-2">
             <div className="private-on text-success flex items-center">
               $
-              {vestingContract_All_SoldedToken ? (
+              {vestingContract_All_SoldedToken !=null ? (
                 (vestingContract_All_SoldedToken + vestingContractAlreadyInvested).toLocaleString("en-US")
               ) : (
                 <div className="flex space-x-1 animate-pulse ml-1">

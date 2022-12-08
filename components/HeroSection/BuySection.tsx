@@ -86,7 +86,7 @@ export default function BuySection(props: {
   const [walletIsDisconnected, setWalletIsDisconnected] = React.useState<boolean>(false);
   const testButton_Ref = React.useRef<HTMLButtonElement>(null);
   const [userNumberOfTokens, setUserNumberOfTokens] = React.useState<BigNumber | null>(null); // this will be BigNumber
-  const [ypredAmountToBuy, setYpredAmountToBuy] = React.useState("2"); // this will be the amount of YPredict token to buy
+  const [ypredAmountToBuy, setYpredAmountToBuy] = React.useState("0"); // this will be the amount of YPredict token to buy
   const [ypresUSDT_price_PerToekn, setYpredUSDT_price_PerToekn] = React.useState(null); // this will be the price of YPredict token in USDT
   const [is_Step_1_transaction_moining, setIs_Step_1_transaction_moining] = React.useState(false);
   const [Is_step_2_begin, setIs_step_2_begin] = React.useState(false);
@@ -96,7 +96,7 @@ export default function BuySection(props: {
   const [minAmountToInvest, setMinAmountToInvest] = React.useState<string>("0"); // this will be fetched from the contract
   const [showMinimumMessage, setShowMinimumMessage] = React.useState<boolean>(false);
   const [chainId, setChainID] = React.useState<number>(1); // Mumbai ChainId
-  const [ChainIdDev, setChainIdDev] = React.useState<number>(80001); // we testing in this chain
+  const [ChainIdDev, setChainIdDev] = React.useState<number>(137); // we testing in this chain
   const butButtonRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   // this image tracker has two elements, status of the image tracker and the amount of YPredict token bought
@@ -282,14 +282,16 @@ export default function BuySection(props: {
       const AwaitTransactionMined_Interval = setInterval(async () => {
         console.log("interval for waiting step 1 transaction status....");
         const readOptions = {
-          contractAddress: USDC_ContractAddress,
+          contractAddress: USDT_ContractAddress,
           functionName: "allowance",
-          abi: USDC_ABI,
+          abi: USDT_ABI,
           params: {
             owner: account,
             spender: YPredictPrivateSale_address,
           },
         };
+        // //! Note : this variable should be removed later, it's just for testing
+        // const ypredAmountToBuy="10";
         const message = await Moralis.executeFunction(readOptions);
         const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
           .mul(BigNumber.from(ypresUSDT_price_PerToekn))
@@ -315,7 +317,8 @@ export default function BuySection(props: {
         // ** next step 2 : request to approve the transaction
         props.stepsStatus.step_2.status = "waiting_approve";
         props.setStepsStatus({ ...props.stepsStatus });
-
+        //! Note : this variable should be removed later, it's just for testing
+        // const ypredAmountToBuy="10";
         const sendOptions = {
           contractAddress: YPredictPrivateSale_address,
           functionName: "buyTokens",
@@ -452,6 +455,59 @@ export default function BuySection(props: {
       butButtonRef.current.disabled = false; // set buy token enabled
       return;
     }
+    //* hide Img Tracking before buying token
+    setIsImgTrackerShown([false, 0]);
+    // * show Buy Token Modal progress bar,
+    props.stepsStatus.step_1.status = "waiting_approve"; // change step 1 state to "waiting_approve"
+    props.setStepsStatus(props.stepsStatus); // set the state
+    props.setShowBuyTokenModal(true); // show buy token Modal
+    const approveUSDC = async () => {
+      //** Uncomment here to get the transaction */
+      console.log("-----------------");
+
+      //** Approve USDC to be spent by the contract */
+      let IsErrorOccured = false;
+      let transaction: Moralis.ExecuteFunctionResult = null;
+      const approvedValueToSpend = BigNumber.from(ypredAmountToBuy)
+        .mul(BigNumber.from(ypresUSDT_price_PerToekn))
+        .toString();
+      const sendOptions = {
+        contractAddress: USDT_ContractAddress,
+        functionName: "approve",
+        abi: USDT_ABI,
+        params: {
+          spender: YPredictPrivateSale_address,
+          amount: approvedValueToSpend,
+        },
+      };
+
+      await Moralis.executeFunction(sendOptions)
+        .then(res => {
+          console.log("result of calling approve: ", res);
+          transaction = res;
+        })
+        .catch(error => {
+          console.log("error Occured while calling approve: ", error);
+          butButtonRef.current.disabled = false;
+          console.log("buy Button Enabled");
+          IsErrorOccured = true;
+          toast.error("Error in Approving USDT transaction");
+          props.stepsStatus.step_1.status = "error";
+          props.setStepsStatus({ ...props.stepsStatus });
+        });
+
+      if (!IsErrorOccured || transaction != null) {
+        props.stepsStatus.step_1.status = "waiting_transaction_Mining";
+        props.setStepsStatus({ ...props.stepsStatus });
+        setIs_Step_1_transaction_moining(true);
+      }
+    };
+    approveUSDC();
+
+    console.log("Clicked on Test Button action finished!");
+  };
+  const clickTestButton_2= async () => {
+   const ypredAmountToBuy="10";
     //* hide Img Tracking before buying token
     setIsImgTrackerShown([false, 0]);
     // * show Buy Token Modal progress bar,

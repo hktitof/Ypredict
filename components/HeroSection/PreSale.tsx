@@ -65,7 +65,7 @@ export default function PreSale() {
     if (isStarted === null || isStarted === false) return;
     // this will set the time remaining for the private sale
     const getBlockTime = async () => {
-      const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-rpc.com");
       const currentBlock = await provider.getBlockNumber();
       const blockTimestamp = (await provider.getBlock(currentBlock)).timestamp; // this is in seconds
       console.log("Block time stamp : ", blockTimestamp);
@@ -81,7 +81,7 @@ export default function PreSale() {
   //* check if the pre-sale has started
   useEffect(() => {
     const checkIfStarted = async () => {
-      const provider = new ethers.providers.JsonRpcProvider("https://polygon-testnet-rpc.allthatnode.com:8545");
+      const provider = new ethers.providers.JsonRpcProvider("https://polygon-rpc.com");
       const currentBlock = await provider.getBlockNumber();
       const blockTimestamp = (await provider.getBlock(currentBlock)).timestamp; // this is in seconds BigNumber
       console.log("Block time stamp/BigNumber: ", blockTimestamp);
