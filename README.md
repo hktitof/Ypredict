@@ -1,6 +1,6 @@
 ## This is a temporary README
 
-### How To Use for Developers Only
+### How To Use for YPredict Developers  Only, Announcement!!! MOVED TO Mainnet
 
 ## 🛠 Installation & Set Up
 
