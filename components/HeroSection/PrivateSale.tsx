@@ -132,9 +132,13 @@ export default function PrivateSale(props: {
               </li>
               <Tooltip title="Coming soon">
                 <li className="flex items-center hover:cursor-help">
-                  <img src="./img/icon/eth.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
-                Ethereum USDT
-              </li>
+                  <img
+                    src="./img/icon/eth.png"
+                    alt=""
+                    style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }}
+                  />
+                  Ethereum USDT
+                </li>
               </Tooltip>
             </ul>
           </div>

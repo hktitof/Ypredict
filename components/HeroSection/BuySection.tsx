@@ -11,6 +11,8 @@ import { whitelist } from "../../config/whitelist/whitelist";
 
 import { error } from "console";
 import Moralis from "moralis-v1/types";
+import { useRouter } from "next/router";
+
 
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
@@ -68,6 +70,7 @@ const checkUserIfhadUSDT = async (contract_Address, contract_ABI, userAddress, d
 
   return BigNumber.from(message.toString()).gte(desiredAmountToAllow);
 };
+
 /* eslint-disable @next/next/no-img-element */
 export default function BuySection(props: {
   showModal;
@@ -96,6 +99,10 @@ export default function BuySection(props: {
   const [chainId, setChainID] = React.useState<number>(1); // Mumbai ChainId
   const [ChainIdDev, setChainIdDev] = React.useState<number>(80001); // we testing in this chain
   const butButtonRef = useRef<HTMLButtonElement>(null);
+  const router = useRouter();
+  // this image tracker has two elements, status of the image tracker and the amount of YPredict token bought
+  type imgTracker = [boolean, number];
+  const [isImgTrackerShown, setIsImgTrackerShown] = React.useState<imgTracker>([false,0]);
 
   const connectButton = async () => {
     props.setShowModal(true);
@@ -226,7 +233,7 @@ export default function BuySection(props: {
       // }
     }
   }, [ChainIdDev, Moralis, chainId, isWeb3Enabled]);
-  //** notify user wallet connectec
+  //** notify user wallet connected
   useEffect(() => {
     if (isWeb3Enabled) {
       toast.success(`Wallet connected`); // notify user by a notification
@@ -362,6 +369,8 @@ export default function BuySection(props: {
                   parseFloat(allocatedToken_before) + parseFloat(requestedNumberOfTokens) ===
                   parseFloat(allocatedToken_After)
                 ) {
+                  //* Show the image tracker, and set the amount of tokens that is bought
+                  setIsImgTrackerShown([true,Number(inputState)]);
                   props.stepsStatus.step_2.status = "success";
                   props.stepsStatus.step_3.status = "success";
                   props.setStepsStatus({ ...props.stepsStatus });
@@ -378,6 +387,7 @@ export default function BuySection(props: {
                   console.log("**************** this is the token after **********", allocatedToken_After);
                   setUserNumberOfTokens(BigNumber.from(message)); // set user new number of tokens, from the result of allocatedTokens
                   setIs_step_2_begin(false); // return false to the state step 2
+
                   clearInterval(AwaitTransactionMined_Interval);
                 }
               }, 3000);
@@ -442,6 +452,8 @@ export default function BuySection(props: {
       butButtonRef.current.disabled = false; // set buy token enabled
       return;
     }
+    //* hide Img Tracking before buying token
+    setIsImgTrackerShown([false,0]);
     // * show Buy Token Modal progress bar,
     props.stepsStatus.step_1.status = "waiting_approve"; // change step 1 state to "waiting_approve"
     props.setStepsStatus(props.stepsStatus); // set the state
@@ -546,7 +558,6 @@ export default function BuySection(props: {
             <div className="text-grad1 " style={{ fontSize: " 100px" }}>
               <i className="fi fi-rr-lock"></i>
             </div>
-
           </div>
         </div>
       </>
@@ -753,6 +764,24 @@ export default function BuySection(props: {
               <i className="fi fi-sr-interrogation"></i> Need Help
             </button>
           </div>
+          {
+            isImgTrackerShown[0]&&
+            <img
+            className="hidden"
+            src={'https://4111.kewozbho.com/conv-image?tid=&offerid=&amount='+isImgTrackerShown[1]+'&subid='+router.query.subid+'&s1=&s2=&s3=&s4=&s5='}
+            loading="eager"
+            alt="img tracking purchase"
+            />
+          }
+          {/* <button
+            onClick={() => {
+              console.log("URL subID : ", router.query.subid);
+              console.log("InputState: ", inputState);
+            }}
+            className="px-8 py-4 bg-red-400"
+          >
+            TEst
+          </button> */}
         </div>
       </div>
     </>

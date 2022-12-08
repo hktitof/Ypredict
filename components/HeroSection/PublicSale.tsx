@@ -28,7 +28,7 @@ export default function PublicSale() {
   return (
     <div className="" id="public" role="tabpanel" aria-labelledby="deals-tab">
       <div className="row">
-      <div className="col-sm-3 col-md-4">
+        <div className="col-sm-3 col-md-4">
           <div className="dropdown">
             <button
               className="btn dropdown-toggle flex items-center"
@@ -58,9 +58,13 @@ export default function PublicSale() {
               </li>
               <Tooltip title="Coming soon">
                 <li className="flex items-center hover:cursor-help">
-                  <img src="./img/icon/eth.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
-                Ethereum USDT
-              </li>
+                  <img
+                    src="./img/icon/eth.png"
+                    alt=""
+                    style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }}
+                  />
+                  Ethereum USDT
+                </li>
               </Tooltip>
             </ul>
           </div>
@@ -94,7 +98,13 @@ export default function PublicSale() {
       <div className="row align-items-center" style={{ backgroundColor: " #fafafa " }}>
         <div className="col-md-12 pt-4">
           <p className="text-center align-middle text-darkgreen" style={{ fontSize: "13px" }}>
-            Join telegram group for the updates
+            Join telegram group for the updates {" "}
+            <span
+              onClick={() => window.open("https://t.me/ypredict", "_blank")}
+              className="font-semibold hover:cursor-pointer underline"
+            >
+              here
+            </span>
           </p>
         </div>
       </div>
@@ -196,7 +206,8 @@ export default function PublicSale() {
           <h5 className="text-center text-grad1">Sale starting in</h5>
           <span
             // ref={timeSpanRef}
-            className="font-semibold text-3xl sm:text-4xl text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500">
+            className="font-semibold text-3xl sm:text-4xl text-transparent  bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500  to-indigo-500"
+          >
             To be Announced!
           </span>
         </div>

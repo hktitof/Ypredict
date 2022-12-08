@@ -6,7 +6,6 @@ import { boltx } from "web3modal/dist/providers/connectors";
 import Lock from "./icon/Lock";
 import Tooltip from "@mui/material/Tooltip";
 
-
 const getFormatDateTime = seconds => {
   const formatDateTime = time => {
     time = Number(time);
@@ -121,7 +120,6 @@ export default function PreSale() {
             >
               <i className="fi fi-sr-wallet"></i> Connect Wallet
             </button> */}
-
           </div>
         </div>
       </>
@@ -130,7 +128,7 @@ export default function PreSale() {
   return (
     <div className="" id="presale" role="tabpanel" aria-labelledby="deals-tab">
       <div className="row">
-      <div className="col-sm-3 col-md-4">
+        <div className="col-sm-3 col-md-4">
           <div className="dropdown">
             <button
               className="btn dropdown-toggle flex items-center"
@@ -160,9 +158,13 @@ export default function PreSale() {
               </li>
               <Tooltip title="Coming soon">
                 <li className="flex items-center hover:cursor-help">
-                  <img src="./img/icon/eth.png" alt="" style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }} />
-                Ethereum USDT
-              </li>
+                  <img
+                    src="./img/icon/eth.png"
+                    alt=""
+                    style={{ width: "30px", marginLeft: "10px", marginRight: " 10px" }}
+                  />
+                  Ethereum USDT
+                </li>
               </Tooltip>
             </ul>
           </div>
@@ -194,42 +196,48 @@ export default function PreSale() {
         </div>
       </div>
       <div className="row align-items-center" style={{ backgroundColor: " #fafafa " }}>
-        <div className="col-md-12 pt-4">
+        <div className="col-md-12 pt-4 ">
           <p className="text-center align-middle text-darkgreen" style={{ fontSize: "13px" }}>
-            Join telegram group for the updates
+            Join telegram group for the updates{" "}
+            <span
+              onClick={() => window.open("https://t.me/ypredict", "_blank")}
+              className="font-semibold hover:cursor-pointer underline"
+            >
+              here
+            </span>
           </p>
         </div>
       </div>
       <div className="wrapper ">
         {/* Lock */}
         <div className="relative">
-        <ISNotConnected />
-        <div className="row" style={{ marginTop: " 20px" }}>
-          <div className=" col-6 text-center">
-            <p className="text-dark2 text-box-sub-title"> Pre Sale Price</p>
-            <p className="text-box-content">
-              {/* {"$"}
+          <ISNotConnected />
+          <div className="row" style={{ marginTop: " 20px" }}>
+            <div className=" col-6 text-center">
+              <p className="text-dark2 text-box-sub-title"> Pre Sale Price</p>
+              <p className="text-box-content">
+                {/* {"$"}
               {ypresUSDT_price_PerToekn
                 ? convertPriceTokenBigNumberToUSDT_Tofixed_3(ypresUSDT_price_PerToekn)
                 : "0.036"} */}
                 $0.037
-            </p>
+              </p>
+            </div>
+            <div className=" col-6 text-center">
+              <p className="text-dark2 text-box-sub-title "> Pre Sale Goal</p>
+              <p className="text-box-content"> $300,000</p>
+            </div>
           </div>
-          <div className=" col-6 text-center">
-            <p className="text-dark2 text-box-sub-title "> Pre Sale Goal</p>
-            <p className="text-box-content"> $300,000</p>
+          <div className="row" style={{ marginTop: " 20px" }}>
+            <div className=" col-6 text-center">
+              <p className="text-dark2 text-box-sub-title"> Listing Price</p>
+              <p className="text-box-content">$0.045</p>
+            </div>
+            <div className=" col-6 text-center">
+              <p className="text-dark2 text-box-sub-title"> ROI at Listing</p>
+              <p className="text-box-content">20%</p>
+            </div>
           </div>
-        </div>
-        <div className="row" style={{ marginTop: " 20px" }}>
-          <div className=" col-6 text-center">
-            <p className="text-dark2 text-box-sub-title"> Listing Price</p>
-            <p className="text-box-content">$0.045</p>
-          </div>
-          <div className=" col-6 text-center">
-            <p className="text-dark2 text-box-sub-title"> ROI at Listing</p>
-            <p className="text-box-content">20%</p>
-          </div>
-        </div>
           <div className="w-full flex flex-row space-x-4 justify-center mt-4 mb-4">
             <div className="flex items-center space-x-1">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-7 w-7 ">
