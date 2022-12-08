@@ -218,7 +218,7 @@ export default function PrivateSale(props: {
                     </span> */}
         {timeRemaining ? (
           <div className="w-full flex flex-col space-y-3 justify-center items-center">
-            <h5 className="text-center text-grad1">Sale starting in</h5>
+            <h5 className="text-center text-grad1">Sale ending in</h5>
             <CountDown timeRemaining={timeRemaining} />
           </div>
         ) : (
