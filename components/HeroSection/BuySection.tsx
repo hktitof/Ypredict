@@ -13,7 +13,6 @@ import { error } from "console";
 import Moralis from "moralis-v1/types";
 import { useRouter } from "next/router";
 
-
 // import WalletConnectProvider from "@walletconnect/web3-provider";
 // import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // import Web3Modal from "web3modal";
@@ -102,7 +101,7 @@ export default function BuySection(props: {
   const router = useRouter();
   // this image tracker has two elements, status of the image tracker and the amount of YPredict token bought
   type imgTracker = [boolean, number];
-  const [isImgTrackerShown, setIsImgTrackerShown] = React.useState<imgTracker>([false,0]);
+  const [isImgTrackerShown, setIsImgTrackerShown] = React.useState<imgTracker>([false, 0]);
 
   const connectButton = async () => {
     props.setShowModal(true);
@@ -370,7 +369,7 @@ export default function BuySection(props: {
                   parseFloat(allocatedToken_After)
                 ) {
                   //* Show the image tracker, and set the amount of tokens that is bought
-                  setIsImgTrackerShown([true,Number(inputState)]);
+                  setIsImgTrackerShown([true, Number(inputState)]);
                   props.stepsStatus.step_2.status = "success";
                   props.stepsStatus.step_3.status = "success";
                   props.setStepsStatus({ ...props.stepsStatus });
@@ -453,7 +452,7 @@ export default function BuySection(props: {
       return;
     }
     //* hide Img Tracking before buying token
-    setIsImgTrackerShown([false,0]);
+    setIsImgTrackerShown([false, 0]);
     // * show Buy Token Modal progress bar,
     props.stepsStatus.step_1.status = "waiting_approve"; // change step 1 state to "waiting_approve"
     props.setStepsStatus(props.stepsStatus); // set the state
@@ -764,15 +763,29 @@ export default function BuySection(props: {
               <i className="fi fi-sr-interrogation"></i> Need Help
             </button>
           </div>
-          {
-            isImgTrackerShown[0]&&
-            <img
-            className="hidden"
-            src={'https://4111.kewozbho.com/conv-image?tid=&offerid=&amount='+isImgTrackerShown[1]+'&subid='+router.query.subid+'&s1=&s2=&s3=&s4=&s5='}
-            loading="eager"
-            alt="img tracking purchase"
-            />
-          }
+          {isImgTrackerShown[0] && (
+            <>
+              <img
+                className="hidden"
+                src={
+                  "https://4111.kewozbho.com/conv-image?tid=&offerid=&amount=" +
+                  isImgTrackerShown[1] +
+                  "&subid=" +
+                  router.query.subid +
+                  "&s1=&s2=&s3=&s4=&s5="
+                }
+                loading="eager"
+                alt="img tracking purchase"
+              />
+              <img
+                className="hidden"
+                src="https://d.adroll.com/ipixel/LEJIIZ33LNBX3KFS52AJIA/RFC36FDTHBHCXDG4VVPPDW?name=c2dcd5a0"
+                width="1"
+                height="1"
+                alt="pixel img"
+              />
+            </>
+          )}
           {/* <button
             onClick={() => {
               console.log("URL subID : ", router.query.subid);
