@@ -415,6 +415,7 @@ export default function BuySection(props: {
     props.stepsStatus.step_1.status = "waiting_approve";
     props.setShowBuyTokenModal(true);
   };
+  //  TODO : everything is working fine for in Testnet now, we need to test it in Mainnet
   const clickTestButton = async () => {
     console.log("Buy Button Clicked!");
     butButtonRef.current.disabled = true; // disable buy token button
@@ -477,7 +478,6 @@ export default function BuySection(props: {
         },
       };
 
-      // ** TODO : continue here fix loading it should shows the time for waiting the approval
       await Moralis.executeFunction(sendOptions)
         .then(res => {
           console.log("result of calling approve: ", res);
