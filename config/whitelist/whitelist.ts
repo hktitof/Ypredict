@@ -7,10 +7,9 @@
  */
 
 /**
- * @note : HOW T_ MODIFY WHITELIST ?
- * @Step 1 : grab your whitelist that line by line, and convert it to lowercase in this website "https://convertcase.net/"
+ * @note : HOW TO MODIFY WHITELIST ?
+ * @Step 1 : grab your whitelist that is formated as a text line by line, each line contains an address, and convert it to lowercase in this website "https://convertcase.net/"
  * @Step 2 : copy the result and paste it in this website "http://static.decontextualize.com/lines-to-json/"
- * @Step 3 : copy the result and paste it in this file, after the "whitelist = "
  * @Attention_1 : each time you time you modify the whitelist, you should redeploy the dapp
  * @Attention_2 : make sure that all addresses in the whitelist are in lowercase 
  */

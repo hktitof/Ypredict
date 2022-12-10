@@ -410,7 +410,7 @@ export default function BuySection(props: {
       // ** next try catch is used to handle an error it doesn't appear always but sometimes it appears
       step2();
     }
-  }, [Is_step_2_begin, Moralis, account, props, userNumberOfTokens, ypredAmountToBuy]);
+  }, [Is_step_2_begin, Moralis, account, inputState, props, userNumberOfTokens, ypredAmountToBuy]);
 
   console.log("ButSection is re-rendered!!!!!");
 
