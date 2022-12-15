@@ -160,7 +160,7 @@ export default function BuySection(props: {
     }
   }, [ChainIdDev, Moralis, account, chainId, ypresUSDT_price_PerToekn]);
 
-  // ** NOTE : useEffect : automaticaly run on load, then, it'll run checking the value again
+  // ** NOTE : useEffect : automatically run on load, then, it'll run checking the value again
   // ** check if wallet is connected
   useEffect(() => {
     // check if wallet is connected
@@ -217,7 +217,22 @@ export default function BuySection(props: {
             await Moralis.switchNetwork(ChainIdDev);
           } catch (error) {
             toast.error("Please switch to Polygon network");
-            alert(error.message);
+            // alert(error.message);
+            //* Check if the user doesn't have netWork in his wallet
+            if (error.code == 4902) {
+              toast.error("Please allow to add Polygon network in your wallet");
+              const chainId = 137;
+              const chainName = "Matic Mainnet";
+              const currencyName = "MATIC";
+              const currencySymbol = "MATIC";
+              const rpcUrl = "https://polygon-rpc.com/";
+              const blockExplorerUrl = "https://polygonscan.com/";
+              try {
+                await Moralis.addNetwork(chainId, chainName, currencyName, currencySymbol, rpcUrl, blockExplorerUrl);
+              } catch (error) {
+                toast.error("something happened will trying to add network");
+              }
+            }
           }
         };
         switchNetwork();
@@ -506,8 +521,8 @@ export default function BuySection(props: {
 
     console.log("Clicked on Test Button action finished!");
   };
-  const clickTestButton_2= async () => {
-   const ypredAmountToBuy="10";
+  const clickTestButton_2 = async () => {
+    const ypredAmountToBuy = "10";
     //* hide Img Tracking before buying token
     setIsImgTrackerShown([false, 0]);
     // * show Buy Token Modal progress bar,
@@ -632,7 +647,8 @@ export default function BuySection(props: {
             <button
               onClick={async () => {
                 try {
-                  await Moralis.switchNetwork(80001);
+                  await Moralis.switchNetwork(chainId);
+                  // await Moralis.addNetwork;
                 } catch (error) {
                   toast.error("Please switch to Polygon network");
                   alert(error.message);
